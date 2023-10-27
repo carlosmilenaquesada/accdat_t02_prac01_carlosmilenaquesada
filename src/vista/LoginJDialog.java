@@ -1,6 +1,9 @@
 package vista;
 
 import controlador.Conexion;
+import java.awt.Component;
+import java.awt.Graphics;
+import javax.swing.Icon;
 import javax.swing.JOptionPane;
 
 public class LoginJDialog extends javax.swing.JDialog {
@@ -11,10 +14,10 @@ public class LoginJDialog extends javax.swing.JDialog {
     }
 
     private void CrearConexion() {
-        String servidor = /*jTextFieldServidor.getText()*/"localhost";
-        String puerto = /*jTextFieldPuerto.getText()*/"1521";
-        String usuario = /*jTextFieldUsuario.getText()*/"AD_TEMA02_FICHAJES";
-        String password = /*jTextFieldPassword.getText()*/"AD_TEMA02_FICHAJES";
+        String servidor = /*jTextFieldServidor.getText()*/ "localhost";
+        String puerto = /*jTextFieldPuerto.getText()*/ "1521";
+        String usuario = /*jTextFieldUsuario.getText()*/ "AD_TEMA02_FICHAJES";
+        String password = /*jTextFieldPassword.getText()*/ "AD_TEMA02_FICHAJES";
 
         boolean camposEscritos = true;
 
@@ -42,11 +45,11 @@ public class LoginJDialog extends javax.swing.JDialog {
                 //de conexión en el login.
                 Defectos.CONEXION_ESQUEMA = usuario;
                 dispose();
-            }else{
+            } else {
                 JOptionPane.showMessageDialog(null, "No se ha establecido"
-                        + " una conexión válida con el servidor.", "Error", JOptionPane.ERROR_MESSAGE);                
+                        + " una conexión válida con el servidor.", "Error", JOptionPane.ERROR_MESSAGE);
             }
-        }else{
+        } else {
             JOptionPane.showMessageDialog(null, "Debe ingresar todos los campos.", "Error", JOptionPane.ERROR_MESSAGE);
         }
     }

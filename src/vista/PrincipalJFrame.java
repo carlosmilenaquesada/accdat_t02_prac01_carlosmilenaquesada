@@ -7,6 +7,8 @@ import controlador.ConsultaDeTablas;
 import java.util.ArrayList;
 import java.util.Arrays;
 import javax.swing.DefaultComboBoxModel;
+import javax.swing.JComboBox;
+import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 
 public class PrincipalJFrame extends javax.swing.JFrame {
@@ -26,7 +28,7 @@ public class PrincipalJFrame extends javax.swing.JFrame {
     DefaultTableModel dtmTomados;
     DefaultTableModel dtmCondiciones;
     DefaultTableModel dtmTablaResultado;
-    
+
     public PrincipalJFrame() {
         //Creación del JDialog del login
         LoginJDialog ljd = new LoginJDialog(this, true);
@@ -36,7 +38,7 @@ public class PrincipalJFrame extends javax.swing.JFrame {
         //bajo el esquema que se a proporcionado en el login. Guardamos la
         //conexión el en un objeto para poder trabajar con ella.
         conexion = Conexion.getInstance();
-        
+
         initComponents();
 
         //A algunos componentes que he agregado al JFrame principal, les tengo
@@ -44,9 +46,9 @@ public class PrincipalJFrame extends javax.swing.JFrame {
         //tengo que configurar los valores que el programa carga por defecto a su
         //inicio. Dichas acciones las realizo en la siguiente función.
         initConfiguracion();
-        
+
     }
-    
+
     private void initConfiguracion() {
         //Combobox
         dcbmTablas = (DefaultComboBoxModel<String>) jComboBoxTablas.getModel();
@@ -55,6 +57,15 @@ public class PrincipalJFrame extends javax.swing.JFrame {
         dcbmOperadorLogico.addAll(Arrays.asList(new String[]{
             "=", "<>", ">", "<", ">=", "<=", "BETWEEN", "IN",
             "IS NULL", "IS NOT NULL", "LIKE", "NOT LIKE",}));
+        
+        /*
+            < : number
+            > : number
+            <> : varchar2, number, date
+            = : varchar2, number, date
+            like : varchar2
+            between : number, date
+        */
         dcbmOperadorRelacional = (DefaultComboBoxModel<String>) jComboBoxOperadorRelacional.getModel();
         dcbmOperadorRelacional.addAll(Arrays.asList(new String[]{"AND", "OR"}));
 
@@ -71,7 +82,7 @@ public class PrincipalJFrame extends javax.swing.JFrame {
         //Rellenar lista de tablas inicial
         dcbmTablas.addAll(cdm.obtenerNombreTablas());
     }
-    
+
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
@@ -361,8 +372,30 @@ public class PrincipalJFrame extends javax.swing.JFrame {
             dtm.removeRow(i);
         }
     }
+
+    private void traspasoDeSeleccionados(JTable tablaOrigen, DefaultTableModel modelOrigen, DefaultTableModel modelDestino) {
+        if (tablaOrigen.getSelectedRowCount() >= 1) {
+            int[] rowsSeleccionadas = tablaOrigen.getSelectedRows();
+            for (int i = rowsSeleccionadas.length - 1; i >= 0; i--) {
+                modelDestino.addRow(new Object[]{modelOrigen.getValueAt(rowsSeleccionadas[i], 0)});
+                modelOrigen.removeRow(rowsSeleccionadas[i]);
+            }
+        }
+    }
+
+    private void traspasoDeTodos(DefaultTableModel modelOrigen, DefaultTableModel modelDestino) {
+        for (int i = modelOrigen.getRowCount() - 1; i >= 0; i--) {
+            modelDestino.addRow(new Object[]{modelOrigen.getValueAt(i, 0)});
+        }
+    }
+    
+    private void rellenarComboBoxConTabla(JTable tablaOrigen, JComboBox comboBoxDestino){
+        //tablaOrigen
+    }
+
     private void jComboBoxTablasActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jComboBoxTablasActionPerformed
         limpiarTabla(dtmDisponibles);
+        limpiarTabla(dtmTomados);
         ArrayList<String> nombreColumnas = cdm.obtenerNombreColumnasDeTabla((String) dcbmTablas.getSelectedItem());
         for (String columna : nombreColumnas) {
             dtmDisponibles.addRow(new String[]{columna});
@@ -370,27 +403,23 @@ public class PrincipalJFrame extends javax.swing.JFrame {
     }//GEN-LAST:event_jComboBoxTablasActionPerformed
 
     private void jButtonListaTomarUnoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonListaTomarUnoActionPerformed
-        if (jTableDisponibles.getSelectedRowCount() >= 1) {
-            int[] rowsSeleccionadas = jTableDisponibles.getSelectedRows();
-            for (int i = rowsSeleccionadas.length - 1; i >= 0; i--) {
-                dtmTomados.addRow(new Object[]{dtmDisponibles.getValueAt(rowsSeleccionadas[i], 0)});
-                dtmDisponibles.removeRow(rowsSeleccionadas[i]);
-            }            
-        }
+        traspasoDeSeleccionados(jTableDisponibles, dtmDisponibles, dtmTomados);
     }//GEN-LAST:event_jButtonListaTomarUnoActionPerformed
 
     private void jButtonListaTomarTodosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonListaTomarTodosActionPerformed
-        // TODO add your handling code here:
+        traspasoDeTodos(dtmDisponibles, dtmTomados);
+        limpiarTabla(dtmDisponibles);
     }//GEN-LAST:event_jButtonListaTomarTodosActionPerformed
 
     private void jButtonListaQuitarUnoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonListaQuitarUnoActionPerformed
-        // TODO add your handling code here:
+        traspasoDeSeleccionados(jTableTomados, dtmTomados, dtmDisponibles);
     }//GEN-LAST:event_jButtonListaQuitarUnoActionPerformed
 
     private void jButtonListaQuitarTodosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonListaQuitarTodosActionPerformed
-        // TODO add your handling code here:
+        traspasoDeTodos(dtmTomados, dtmDisponibles);
+        limpiarTabla(dtmTomados);
     }//GEN-LAST:event_jButtonListaQuitarTodosActionPerformed
-    
+
     public static void main(String args[]) {
         try {
             for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
