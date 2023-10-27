@@ -12,26 +12,27 @@ public class Conexion {
      * inicializar a del constructor por parámetros.
      */
     private static Connection connection = null;
-    private String server;
-    private String port;
-    private String user;
-    private String pass;
+    private static String server;
+    private static String port;
+    private static String user;
+    private static String pass;
 
     /**
      * El constructor por defecto es privado, ya que no queremos que se cree una
      * instancia de Conexión con atributos vacíos con estado no válido.
      */
-    private Conexion() {}
+    private Conexion() {
+    }
 
     /**
      * Mediante el constructor por parámetros, se inicializan los atributos que
      * recibirá la Connection.
      */
     public Conexion(String server, String port, String user, String pass) {
-        this.server = server;
-        this.port = port;
-        this.user = user;
-        this.pass = pass;
+        Conexion.server = server;
+        Conexion.port = port;
+        Conexion.user = user;
+        Conexion.pass = pass;
     }
 
     /**
@@ -43,14 +44,23 @@ public class Conexion {
      * exception o por no inicialización), lo que nos permite reintentar la
      * creación. Una una vez creada, no se podrá sobreescribir.
      */
-    public Connection getInstance() {
+    public static Connection getInstance() {
         if (Conexion.connection == null) {
             try {
-                Conexion.connection = DriverManager.getConnection("jdbc:oracle:thin:@" + this.server + ":" + this.port + ":" + "xe", this.user, this.pass);
+                Conexion.connection = DriverManager.getConnection("jdbc:oracle:thin:@" + Conexion.server + ":" + Conexion.port + ":" + "xe", Conexion.user, Conexion.pass);
             } catch (SQLException ex) {
                 Conexion.connection = null;
             }
         }
         return Conexion.connection;
+    }
+
+    public static void cerrarConexion() {
+        try {
+            if (!Conexion.connection.isClosed()) {
+                Conexion.connection.close();
+            }
+        } catch (SQLException ex) {}
+
     }
 }
