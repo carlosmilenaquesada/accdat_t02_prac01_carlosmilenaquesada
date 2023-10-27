@@ -2,18 +2,73 @@ package vista;
 
 import java.sql.*;
 import controlador.Conexion;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import controlador.ConsultasContraMetadatos;
+import controlador.ConsultasContraTablas;
+import java.util.Arrays;
+import javax.swing.DefaultComboBoxModel;
+import javax.swing.table.DefaultTableModel;
 
 public class PrincipalJFrame extends javax.swing.JFrame {
 
+    //Creación de mis variables-------------------------------------------------
+    //Conexión y controladores    
     Connection conexion = null;
+    ConsultasContraMetadatos ccm = null;
+    ConsultasContraTablas cct = null;
+    //Combo box model
+    DefaultComboBoxModel<String> dcbmTablas;
+    DefaultComboBoxModel<String> dcbmCampos;
+    DefaultComboBoxModel<String> dcbmOperadorLogico;
+    DefaultComboBoxModel<String> dcbmOperadorRelacional;
+    //Table model
+    DefaultTableModel dtmDisponibles;
+    DefaultTableModel dtmTomados;
+    DefaultTableModel dtmCondiciones;
+    DefaultTableModel dtmTablaResultado;
 
     public PrincipalJFrame() {
+        //Creación del JDialog del login
         LoginJDialog ljd = new LoginJDialog(this, true);
         ljd.setVisible(true);
+
+        //Una vez logeados, ya tenemos una conexión válida a la base de datos,
+        //bajo el esquema que se a proporcionado en el login. Guardamos la
+        //conexión el en un objeto para poder trabajar con ella.
         conexion = Conexion.getInstance();
+
         initComponents();
+
+        //A algunos componentes que he agregado al JFrame principal, los tengo
+        //de models y otras propiedades. Dicha acción la realizo en la siguiente
+        //función.
+        initConfiguracion();
+
+    }
+
+    private void initConfiguracion() {
+        //Combobox
+        dcbmTablas = (DefaultComboBoxModel<String>) jComboBoxTablas.getModel();
+        dcbmCampos = (DefaultComboBoxModel<String>) jComboBoxCampos.getModel();
+        dcbmOperadorLogico = (DefaultComboBoxModel<String>) jComboBoxOperadorLogico.getModel();
+        dcbmOperadorLogico.addAll(Arrays.asList(new String[]{
+            "=", "<>", ">", "<", ">=", "<=", "BETWEEN", "IN",
+            "IS NULL", "IS NOT NULL", "LIKE", "NOT LIKE",}));
+        dcbmOperadorRelacional = (DefaultComboBoxModel<String>) jComboBoxOperadorRelacional.getModel();
+        dcbmOperadorRelacional.addAll(Arrays.asList(new String[]{"AND", "OR"}));
+
+        //Tablas
+        dtmDisponibles = (DefaultTableModel) jTableDisponibles.getModel();
+        dtmTomados = (DefaultTableModel) jTableTomados.getModel();
+        dtmCondiciones = (DefaultTableModel) jTableCondiciones.getModel();
+        dtmTablaResultado = (DefaultTableModel) jTableTablaResultado.getModel();
+
+        //Controladores
+        ConsultasContraMetadatos ccm = new ConsultasContraMetadatos();
+        ConsultasContraTablas cct = new ConsultasContraTablas();
+        
+        //Rellenar lista de tablas inicial
+        dcbmTablas.addAll(ccm.obtenerNombreTablas());
+
     }
 
     @SuppressWarnings("unchecked")
@@ -24,32 +79,52 @@ public class PrincipalJFrame extends javax.swing.JFrame {
         jLabelTablas = new javax.swing.JLabel();
         jComboBoxTablas = new javax.swing.JComboBox<>();
         jScrollPaneDisponibles = new javax.swing.JScrollPane();
-        jTableDisponibles = new javax.swing.JTable();
+        jTableDisponibles = new javax.swing.JTable(){
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return false;
+            }
+        };
         jButtonListaTomarUno = new javax.swing.JButton();
         jButtonListaTomarTodos = new javax.swing.JButton();
         jButtonListaQuitarUno = new javax.swing.JButton();
         jButtonListaQuitarTodos = new javax.swing.JButton();
         jScrollPaneTomados = new javax.swing.JScrollPane();
-        jTableTomados = new javax.swing.JTable();
+        jTableTomados = new javax.swing.JTable(){
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return false;
+            }
+        };
         jLabelCampo = new javax.swing.JLabel();
         jComboBoxCampos = new javax.swing.JComboBox<>();
         jLabelValor1 = new javax.swing.JLabel();
         jTextFieldValor1 = new javax.swing.JTextField();
         jLabelOperador = new javax.swing.JLabel();
-        jComboBoxOperadorRelacional = new javax.swing.JComboBox<>();
+        jComboBoxOperadorLogico = new javax.swing.JComboBox<>();
         jLabelValor2 = new javax.swing.JLabel();
         jTextFieldValor2 = new javax.swing.JTextField();
-        jComboBoxOperadorLogico = new javax.swing.JComboBox<>();
+        jComboBoxOperadorRelacional = new javax.swing.JComboBox<>();
         jButtonAgregarCondicion = new javax.swing.JButton();
         jScrollPaneCondiciones = new javax.swing.JScrollPane();
-        jTableCondiciones = new javax.swing.JTable();
+        jTableCondiciones = new javax.swing.JTable(){
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return false;
+            }
+        };
         jButtonQuitarCondicion = new javax.swing.JButton();
         jLabelSentenciaSql = new javax.swing.JLabel();
         jScrollPaneSentencia = new javax.swing.JScrollPane();
         jTextAreaSentencia = new javax.swing.JTextArea();
         jButtonEjecutarSentencia = new javax.swing.JButton();
         jScrollPaneTablaResultado = new javax.swing.JScrollPane();
-        jTableTablaResultado = new javax.swing.JTable();
+        jTableTablaResultado = new javax.swing.JTable(){
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return false;
+            }
+        };
         jButtonExportarTabla = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
@@ -61,7 +136,6 @@ public class PrincipalJFrame extends javax.swing.JFrame {
         jPanel1.add(jLabelTablas);
         jLabelTablas.setBounds(20, 20, 70, 25);
 
-        jComboBoxTablas.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
         jPanel1.add(jComboBoxTablas);
         jComboBoxTablas.setBounds(100, 20, 120, 25);
 
@@ -141,7 +215,6 @@ public class PrincipalJFrame extends javax.swing.JFrame {
         jPanel1.add(jLabelCampo);
         jLabelCampo.setBounds(550, 20, 55, 25);
 
-        jComboBoxCampos.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
         jPanel1.add(jComboBoxCampos);
         jComboBoxCampos.setBounds(620, 20, 120, 25);
 
@@ -155,9 +228,8 @@ public class PrincipalJFrame extends javax.swing.JFrame {
         jPanel1.add(jLabelOperador);
         jLabelOperador.setBounds(550, 55, 55, 25);
 
-        jComboBoxOperadorRelacional.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
-        jPanel1.add(jComboBoxOperadorRelacional);
-        jComboBoxOperadorRelacional.setBounds(620, 55, 120, 25);
+        jPanel1.add(jComboBoxOperadorLogico);
+        jComboBoxOperadorLogico.setBounds(620, 55, 120, 25);
 
         jLabelValor2.setText("Valor 2");
         jPanel1.add(jLabelValor2);
@@ -165,9 +237,8 @@ public class PrincipalJFrame extends javax.swing.JFrame {
         jPanel1.add(jTextFieldValor2);
         jTextFieldValor2.setBounds(850, 55, 120, 25);
 
-        jComboBoxOperadorLogico.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
-        jPanel1.add(jComboBoxOperadorLogico);
-        jComboBoxOperadorLogico.setBounds(770, 90, 70, 25);
+        jPanel1.add(jComboBoxOperadorRelacional);
+        jComboBoxOperadorRelacional.setBounds(770, 90, 70, 25);
 
         jButtonAgregarCondicion.setText("+");
         jPanel1.add(jButtonAgregarCondicion);
@@ -175,16 +246,29 @@ public class PrincipalJFrame extends javax.swing.JFrame {
 
         jTableCondiciones.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null}
+                {null, null},
+                {null, null},
+                {null, null},
+                {null, null}
             },
             new String [] {
-                "Title 1", "Title 2", "Title 3", "Title 4"
+                "Condición", "Operador"
             }
-        ));
+        ) {
+            boolean[] canEdit = new boolean [] {
+                false, false
+            };
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
+        });
+        jTableCondiciones.getTableHeader().setReorderingAllowed(false);
         jScrollPaneCondiciones.setViewportView(jTableCondiciones);
+        if (jTableCondiciones.getColumnModel().getColumnCount() > 0) {
+            jTableCondiciones.getColumnModel().getColumn(0).setResizable(false);
+            jTableCondiciones.getColumnModel().getColumn(1).setResizable(false);
+        }
 
         jPanel1.add(jScrollPaneCondiciones);
         jScrollPaneCondiciones.setBounds(510, 125, 410, 125);
@@ -197,6 +281,7 @@ public class PrincipalJFrame extends javax.swing.JFrame {
         jPanel1.add(jLabelSentenciaSql);
         jLabelSentenciaSql.setBounds(20, 260, 110, 14);
 
+        jTextAreaSentencia.setEditable(false);
         jTextAreaSentencia.setColumns(20);
         jTextAreaSentencia.setRows(5);
         jScrollPaneSentencia.setViewportView(jTextAreaSentencia);
@@ -210,16 +295,28 @@ public class PrincipalJFrame extends javax.swing.JFrame {
 
         jTableTablaResultado.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null}
+                {null},
+                {null},
+                {null},
+                {null}
             },
             new String [] {
-                "Title 1", "Title 2", "Title 3", "Title 4"
+                ""
             }
-        ));
+        ) {
+            boolean[] canEdit = new boolean [] {
+                false
+            };
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
+        });
+        jTableTablaResultado.getTableHeader().setReorderingAllowed(false);
         jScrollPaneTablaResultado.setViewportView(jTableTablaResultado);
+        if (jTableTablaResultado.getColumnModel().getColumnCount() > 0) {
+            jTableTablaResultado.getColumnModel().getColumn(0).setResizable(false);
+        }
 
         jPanel1.add(jScrollPaneTablaResultado);
         jScrollPaneTablaResultado.setBounds(20, 400, 850, 225);

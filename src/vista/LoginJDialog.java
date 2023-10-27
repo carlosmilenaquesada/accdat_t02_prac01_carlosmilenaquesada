@@ -36,7 +36,11 @@ public class LoginJDialog extends javax.swing.JDialog {
         }
         if (camposEscritos == true) {
             Conexion conexion = new Conexion(servidor, puerto, usuario, password);
-            if (conexion.getInstance() != null) {
+            if (Conexion.getInstance() != null) {
+                //En mi caso el esquema al que me conecto tiene el mismo nombre 
+                //que el usuario, pero lo ideal sería pedir tambien el esquema
+                //de conexión en el login.
+                Defectos.CONEXION_ESQUEMA = usuario;
                 dispose();
             }else{
                 JOptionPane.showMessageDialog(null, "No se ha establecido"
