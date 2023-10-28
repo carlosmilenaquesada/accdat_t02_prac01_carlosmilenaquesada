@@ -11,9 +11,13 @@ import java.util.ArrayList;
 
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JComponent;
+import javax.swing.JOptionPane;
 
 import javax.swing.JTable;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.text.Document;
 import modelo.Columna;
 import vista.Defectos.TipoDeCondicional;
 
@@ -37,7 +41,13 @@ public class PrincipalJFrame extends javax.swing.JFrame {
 
     //Columnas de la tabla elegida
     ArrayList<Columna> columnasTablaEnFoco = null;
-    
+
+    //Documentos de textField
+    Document documentJtextFieldValor1;
+    Document documentJtextFieldValor2;
+
+    boolean layoutCargado = false;
+
     public PrincipalJFrame() {
         //Creación del JDialog del login
         LoginJDialog ljd = new LoginJDialog(this, true);
@@ -48,16 +58,16 @@ public class PrincipalJFrame extends javax.swing.JFrame {
         //bajo el esquema que se a proporcionado en el login. Guardamos la
         //conexión el en un objeto para poder trabajar con ella.
         conexion = Conexion.getInstance();
-        
+
         initComponents();
         //A algunos componentes que he agregado al JFrame principal, les tengo
         //que inicializar/configurar sus models y otras propiedades. Además, 
         //tengo que configurar los valores que el programa carga por defecto a su
         //inicio. Dichas acciones las realizo en la siguiente función.
         initConfiguracion();
-        
+
     }
-    
+
     private void initConfiguracion() {
         //Combobox
         dcbmTablas = (DefaultComboBoxModel<String>) jComboBoxTablas.getModel();
@@ -77,14 +87,49 @@ public class PrincipalJFrame extends javax.swing.JFrame {
 
         //Colecciones 
         columnasTablaEnFoco = new ArrayList<>();
-        
-        jButtonAgregarCondicion.setEnabled(false);
 
         //Rellenar lista de tablas inicial
         dcbmTablas.addAll(cdm.obtenerNombreTablas());
-        
+
+        documentJtextFieldValor1 = jTextFieldValor1.getDocument();
+        documentJtextFieldValor1.addDocumentListener(new DocumentListener() {
+            @Override
+            public void insertUpdate(DocumentEvent e) {
+
+            }
+
+            @Override
+            public void removeUpdate(DocumentEvent e) {
+                if (jTextFieldValor1.getText().isEmpty()) {
+
+                }
+            }
+
+            @Override
+            public void changedUpdate(DocumentEvent e) {
+            }
+        });
+        documentJtextFieldValor2 = jTextFieldValor2.getDocument();
+        documentJtextFieldValor2.addDocumentListener(new DocumentListener() {
+            @Override
+            public void insertUpdate(DocumentEvent e) {
+
+            }
+
+            @Override
+            public void removeUpdate(DocumentEvent e) {
+                if (jTextFieldValor2.getText().isEmpty()) {
+
+                }
+            }
+
+            @Override
+            public void changedUpdate(DocumentEvent e) {
+            }
+        });
+
     }
-    
+
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
@@ -195,6 +240,7 @@ public class PrincipalJFrame extends javax.swing.JFrame {
         jScrollPaneDisponibles.setBounds(10, 55, 200, 185);
 
         jButtonListaTomarUno.setText(">");
+        jButtonListaTomarUno.setEnabled(false);
         jButtonListaTomarUno.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButtonListaTomarUnoActionPerformed(evt);
@@ -204,6 +250,7 @@ public class PrincipalJFrame extends javax.swing.JFrame {
         jButtonListaTomarUno.setBounds(220, 90, 50, 25);
 
         jButtonListaTomarTodos.setText(">>");
+        jButtonListaTomarTodos.setEnabled(false);
         jButtonListaTomarTodos.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButtonListaTomarTodosActionPerformed(evt);
@@ -213,6 +260,7 @@ public class PrincipalJFrame extends javax.swing.JFrame {
         jButtonListaTomarTodos.setBounds(220, 125, 50, 25);
 
         jButtonListaQuitarUno.setText("<");
+        jButtonListaQuitarUno.setEnabled(false);
         jButtonListaQuitarUno.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButtonListaQuitarUnoActionPerformed(evt);
@@ -222,6 +270,7 @@ public class PrincipalJFrame extends javax.swing.JFrame {
         jButtonListaQuitarUno.setBounds(220, 160, 50, 25);
 
         jButtonListaQuitarTodos.setText("<<");
+        jButtonListaQuitarTodos.setEnabled(false);
         jButtonListaQuitarTodos.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButtonListaQuitarTodosActionPerformed(evt);
@@ -230,6 +279,7 @@ public class PrincipalJFrame extends javax.swing.JFrame {
         jPanelSeleccionTabla.add(jButtonListaQuitarTodos);
         jButtonListaQuitarTodos.setBounds(220, 195, 50, 25);
 
+        jScrollPaneTomados.setDoubleBuffered(true);
         jScrollPaneTomados.setFocusable(false);
 
         jTableTomados.setModel(new javax.swing.table.DefaultTableModel(
@@ -266,9 +316,11 @@ public class PrincipalJFrame extends javax.swing.JFrame {
 
         jLabelCampo.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
         jLabelCampo.setText("Campo");
+        jLabelCampo.setEnabled(false);
         jPanelCreacionCondicionales.add(jLabelCampo);
         jLabelCampo.setBounds(10, 20, 55, 25);
 
+        jComboBoxCampos.setEnabled(false);
         jComboBoxCampos.addItemListener(new java.awt.event.ItemListener() {
             public void itemStateChanged(java.awt.event.ItemEvent evt) {
                 jComboBoxCamposItemStateChanged(evt);
@@ -279,16 +331,21 @@ public class PrincipalJFrame extends javax.swing.JFrame {
 
         jLabelValor1.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
         jLabelValor1.setText("Valor 1");
+        jLabelValor1.setEnabled(false);
         jPanelCreacionCondicionales.add(jLabelValor1);
         jLabelValor1.setBounds(235, 20, 45, 25);
+
+        jTextFieldValor1.setEnabled(false);
         jPanelCreacionCondicionales.add(jTextFieldValor1);
         jTextFieldValor1.setBounds(290, 20, 120, 25);
 
         jLabelOperador.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
         jLabelOperador.setText("Operador");
+        jLabelOperador.setEnabled(false);
         jPanelCreacionCondicionales.add(jLabelOperador);
         jLabelOperador.setBounds(10, 55, 55, 25);
 
+        jComboBoxOperadorLogico.setEnabled(false);
         jComboBoxOperadorLogico.addItemListener(new java.awt.event.ItemListener() {
             public void itemStateChanged(java.awt.event.ItemEvent evt) {
                 jComboBoxOperadorLogicoItemStateChanged(evt);
@@ -299,15 +356,20 @@ public class PrincipalJFrame extends javax.swing.JFrame {
 
         jLabelValor2.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
         jLabelValor2.setText("Valor 2");
+        jLabelValor2.setEnabled(false);
         jPanelCreacionCondicionales.add(jLabelValor2);
         jLabelValor2.setBounds(235, 55, 45, 25);
+
+        jTextFieldValor2.setEnabled(false);
         jPanelCreacionCondicionales.add(jTextFieldValor2);
         jTextFieldValor2.setBounds(290, 55, 120, 25);
 
+        jComboBoxOperadorRelacional.setEnabled(false);
         jPanelCreacionCondicionales.add(jComboBoxOperadorRelacional);
         jComboBoxOperadorRelacional.setBounds(205, 90, 75, 25);
 
         jButtonAgregarCondicion.setText("+");
+        jButtonAgregarCondicion.setEnabled(false);
         jButtonAgregarCondicion.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButtonAgregarCondicionActionPerformed(evt);
@@ -346,6 +408,7 @@ public class PrincipalJFrame extends javax.swing.JFrame {
         jScrollPaneCondiciones.setBounds(10, 125, 345, 115);
 
         jButtonQuitarCondicion.setText("-");
+        jButtonQuitarCondicion.setEnabled(false);
         jPanelCreacionCondicionales.add(jButtonQuitarCondicion);
         jButtonQuitarCondicion.setBounds(360, 175, 50, 25);
 
@@ -355,10 +418,13 @@ public class PrincipalJFrame extends javax.swing.JFrame {
         jPanelSentenciaSql.setBorder(javax.swing.BorderFactory.createTitledBorder(javax.swing.BorderFactory.createEtchedBorder(), "Sentencia SQL generada", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Tahoma", 1, 14))); // NOI18N
         jPanelSentenciaSql.setLayout(null);
 
+        jScrollPaneSentencia.setEnabled(false);
         jScrollPaneSentencia.setFocusable(false);
 
+        jTextAreaSentencia.setEditable(false);
         jTextAreaSentencia.setColumns(20);
         jTextAreaSentencia.setRows(5);
+        jTextAreaSentencia.setEnabled(false);
         jTextAreaSentencia.setFocusable(false);
         jScrollPaneSentencia.setViewportView(jTextAreaSentencia);
 
@@ -366,13 +432,14 @@ public class PrincipalJFrame extends javax.swing.JFrame {
         jScrollPaneSentencia.setBounds(10, 20, 805, 105);
 
         jButtonEjecutarSentencia.setText("Ejecutar");
+        jButtonEjecutarSentencia.setEnabled(false);
         jPanelSentenciaSql.add(jButtonEjecutarSentencia);
         jButtonEjecutarSentencia.setBounds(820, 60, 90, 25);
 
         jPanelPrincipal.add(jPanelSentenciaSql);
         jPanelSentenciaSql.setBounds(10, 270, 920, 135);
 
-        jPanelTablaExportacion.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Resultado de la consulta", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Tahoma", 1, 14))); // NOI18N
+        jPanelTablaExportacion.setBorder(javax.swing.BorderFactory.createTitledBorder(javax.swing.BorderFactory.createEtchedBorder(), "Resultado de la consulta", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Tahoma", 1, 14))); // NOI18N
         jPanelTablaExportacion.setLayout(null);
 
         jScrollPaneTablaResultado.setFocusable(false);
@@ -407,18 +474,19 @@ public class PrincipalJFrame extends javax.swing.JFrame {
         jScrollPaneTablaResultado.setBounds(10, 20, 805, 190);
 
         jButtonExportarTabla.setText("Exportar");
+        jButtonExportarTabla.setEnabled(false);
         jPanelTablaExportacion.add(jButtonExportarTabla);
         jButtonExportarTabla.setBounds(820, 60, 90, 25);
 
         jPanelPrincipal.add(jPanelTablaExportacion);
-        jPanelTablaExportacion.setBounds(10, 420, 920, 220);
+        jPanelTablaExportacion.setBounds(10, 415, 920, 220);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addComponent(jPanelPrincipal, javax.swing.GroupLayout.PREFERRED_SIZE, 1034, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(jPanelPrincipal, javax.swing.GroupLayout.PREFERRED_SIZE, 940, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(0, 0, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
@@ -435,7 +503,7 @@ public class PrincipalJFrame extends javax.swing.JFrame {
             dtm.removeRow(i);
         }
     }
-    
+
     private void traspasoDeSeleccionados(JTable tablaOrigen, DefaultTableModel modelOrigen, DefaultTableModel modelDestino) {
         if (tablaOrigen.getSelectedRowCount() >= 1) {
             int[] rowsSeleccionadas = tablaOrigen.getSelectedRows();
@@ -445,13 +513,13 @@ public class PrincipalJFrame extends javax.swing.JFrame {
             }
         }
     }
-    
+
     private void traspasoDeTodos(DefaultTableModel modelOrigen, DefaultTableModel modelDestino) {
         for (int i = modelOrigen.getRowCount() - 1; i >= 0; i--) {
             modelDestino.addRow(new Object[]{modelOrigen.getValueAt(i, 0)});
         }
     }
-    
+
     private void modificarInputsDeCondiciones(String tipoOperador) {
         //Ya que el tipo de condicionales más habituales quizás sean los de
         //comparación (=, <>, <, >, <=, >=), voy a establecerlos por defecto
@@ -465,7 +533,7 @@ public class PrincipalJFrame extends javax.swing.JFrame {
         //sobre el que se va a trabajar (para agregar comillas, %, el AND de
         //los BETWEEN, etc).
         Defectos.tipoDeCondicional = TipoDeCondicional.TIPO_COMPARACION;
-        
+
         if (tipoOperador.equals("IS NULL") || tipoOperador.equals("IS NOT NULL")) {
             jTextFieldValor1.setVisible(false);
             jLabelValor1.setVisible(false);
@@ -480,9 +548,9 @@ public class PrincipalJFrame extends javax.swing.JFrame {
                     Defectos.tipoDeCondicional = TipoDeCondicional.TIPO_LIKE;
                 }
             }
-        }        
+        }
     }
-    
+
     private void reiniciarTodoElFormulario() {
         //Cada vez que se cambie de tabla, se debe reestablecer a defecto
         //todos los valores y elementos del formulario, excepto la tabla de 
@@ -501,33 +569,40 @@ public class PrincipalJFrame extends javax.swing.JFrame {
         jTextFieldValor2.setVisible(true);
         jTextAreaSentencia.setText("");
         Defectos.tipoDeCondicional = TipoDeCondicional.NO_ASIGNADO;
-        jButtonAgregarCondicion.setEnabled(false);        
     }
-    
+
     private String obtenerLineaCondicional() {
         StringBuilder sb = new StringBuilder();
         //if(dcbmCampos)
         sb.append(((Columna) dcbmCampos.getSelectedItem()).getNombreColumna());
         switch (Defectos.tipoDeCondicional) {
             case TIPO_COMPARACION:
-                sb.append(" ").append((String) dcbmOperadorLogico.getSelectedItem())
-                        .append(" '").append(jTextFieldValor1.getText()).append("'");
-                break;
             case TIPO_LIKE:
+                if (!jTextFieldValor1.getText().isEmpty()) {
+                    sb.append(" ").append((String) dcbmOperadorLogico.getSelectedItem())
+                            .append(" '").append(jTextFieldValor1.getText()).append("'");
+                }else{
+                    sb.setLength(0);
+                }
                 break;
             case TIPO_NULL:
+                sb.append(" ").append((String) dcbmOperadorLogico.getSelectedItem());
                 break;
             case TIPO_BETWEEN:
+                if (!jTextFieldValor1.getText().isEmpty() && !jTextFieldValor2.getText().isEmpty()) {
+                    sb.append(" ").append((String) dcbmOperadorLogico.getSelectedItem());
+                }else{
+                    sb.setLength(0);
+                }
                 break;
             case NO_ASIGNADO:
                 break;
         }
         return sb.toString();
     }
-    
+
     private boolean validarInputsDeCondicional() {
         boolean habilitar = true;
-        
         if ((Defectos.tipoDeCondicional.equals(TipoDeCondicional.TIPO_COMPARACION)
                 || Defectos.tipoDeCondicional.equals(TipoDeCondicional.TIPO_LIKE))
                 && jTextFieldValor1.getText().isEmpty()) {
@@ -560,6 +635,15 @@ public class PrincipalJFrame extends javax.swing.JFrame {
 
     private void jComboBoxTablasItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_jComboBoxTablasItemStateChanged
         if (evt.getStateChange() == ItemEvent.SELECTED) {
+            if (layoutCargado == false) {
+                for (Component c : jPanelSeleccionTabla.getComponents()) {
+                    c.setEnabled(true);
+                }
+                for (Component c : jPanelCreacionCondicionales.getComponents()) {
+                    c.setEnabled(true);
+                }
+                layoutCargado = true;
+            }
             reiniciarTodoElFormulario();
             columnasTablaEnFoco = cdm.obtenerMetasDeColumnasDeTabla((String) dcbmTablas.getSelectedItem());
             for (Columna columna : columnasTablaEnFoco) {
@@ -577,9 +661,8 @@ public class PrincipalJFrame extends javax.swing.JFrame {
 
             //Vamos a trabajar con 3 tipos de datos SQL, que son: NUMBER, VARCHAR2 y
             //DATE. En un proyecto mayor, habría más tipos de datos, y habría
-            //que realizar una adaptacións más exhaustiva, pero en este proyecto,
+            //que realizar una adaptación más exhaustiva, pero en este proyecto,
             //me voy a centrar en adecuar los operadores a estos tres tipos de casos.
-
             if (tipoDatoSql.equals("NUMBER") || tipoDatoSql.equals("DATE")) {
                 dcbmOperadorLogico.addAll(Defectos.OP_LOGICO_NUMBER_Y_DATE);
             } else {
@@ -592,22 +675,26 @@ public class PrincipalJFrame extends javax.swing.JFrame {
      }//GEN-LAST:event_jComboBoxCamposItemStateChanged
 
     private void jComboBoxOperadorLogicoItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_jComboBoxOperadorLogicoItemStateChanged
-        if (evt.getStateChange() == ItemEvent.SELECTED) {           
+        if (evt.getStateChange() == ItemEvent.SELECTED) {
             String tipoOperador = ((String) dcbmOperadorLogico.getSelectedItem());
             //Se modifica el tipo de distribución de los inputs que personalizan
             //los condicionales en base a tipo de operador seleccionado:
             modificarInputsDeCondiciones(tipoOperador);
-            jButtonAgregarCondicion.setEnabled(validarInputsDeCondicional());
         }
     }//GEN-LAST:event_jComboBoxOperadorLogicoItemStateChanged
 
     private void jButtonAgregarCondicionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonAgregarCondicionActionPerformed
         String sentenciaCondicional = obtenerLineaCondicional();
-        System.out.println(sentenciaCondicional);
+        if (!sentenciaCondicional.isEmpty()) {
+            System.out.println(sentenciaCondicional);
+            dtmCondiciones.addRow(new Object[]{sentenciaCondicional, dcbmOperadorRelacional.getSelectedItem()});
+        } else {
+            JOptionPane.showMessageDialog(null, "Debe proporcionar una consulta correcta.");
+        }
     }//GEN-LAST:event_jButtonAgregarCondicionActionPerformed
-    
+
     public static void main(String args[]) {
-        /*try {
+        try {
             for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
                 if ("Nimbus".equals(info.getName())) {
                     javax.swing.UIManager.setLookAndFeel(info.getClassName());
@@ -622,7 +709,7 @@ public class PrincipalJFrame extends javax.swing.JFrame {
             java.util.logging.Logger.getLogger(PrincipalJFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (javax.swing.UnsupportedLookAndFeelException ex) {
             java.util.logging.Logger.getLogger(PrincipalJFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        }*/
+        }
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
                 new PrincipalJFrame().setVisible(true);
