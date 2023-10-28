@@ -4,6 +4,7 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import modelo.Columna;
 import vista.Defectos;
 
 public class ConsultaDeMetadatos {
@@ -38,19 +39,19 @@ public class ConsultaDeMetadatos {
 
         return nombreTablas;
     }
-    
-    public ArrayList<String> obtenerNombreColumnasDeTabla(String nombreTabla){
-        ArrayList<String> nombreColumnas = new ArrayList<>();
+
+    public ArrayList<Columna> obtenerMetasDeColumnasDeTabla(String nombreTabla) {
+        ArrayList<Columna> columnasTabla = new ArrayList<>();
         ResultSet rs = null;
         try {
             rs = dbmd.getColumns(null, Defectos.CONEXION_ESQUEMA, nombreTabla, "%");
-            while(rs.next()){
-                nombreColumnas.add(rs.getString("COLUMN_NAME"));
+            while (rs.next()) {
+                columnasTabla.add(new Columna(rs.getString("COLUMN_NAME"), rs.getString("TYPE_NAME")));
             }
         } catch (SQLException ex) {
             Logger.getLogger(ConsultaDeMetadatos.class.getName()).log(Level.SEVERE, null, ex);
         }
-        return nombreColumnas;
-         
+        return columnasTabla;
+
     }
 }

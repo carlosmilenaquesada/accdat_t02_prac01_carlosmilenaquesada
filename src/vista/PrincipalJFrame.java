@@ -4,12 +4,15 @@ import java.sql.*;
 import controlador.Conexion;
 import controlador.ConsultaDeMetadatos;
 import controlador.ConsultaDeTablas;
+import java.awt.event.ItemEvent;
 import java.util.ArrayList;
 import java.util.Arrays;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JComboBox;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
+import modelo.Columna;
+import vista.Defectos.TipoDeCondicional;
 
 public class PrincipalJFrame extends javax.swing.JFrame {
 
@@ -18,9 +21,9 @@ public class PrincipalJFrame extends javax.swing.JFrame {
     Connection conexion = null;
     ConsultaDeMetadatos cdm = null;
     ConsultaDeTablas cdt = null;
-    //Combo box model
+    //Combo Box model
     DefaultComboBoxModel<String> dcbmTablas;
-    DefaultComboBoxModel<String> dcbmCampos;
+    DefaultComboBoxModel<Columna> dcbmCampos;
     DefaultComboBoxModel<String> dcbmOperadorLogico;
     DefaultComboBoxModel<String> dcbmOperadorRelacional;
     //Table model
@@ -29,10 +32,14 @@ public class PrincipalJFrame extends javax.swing.JFrame {
     DefaultTableModel dtmCondiciones;
     DefaultTableModel dtmTablaResultado;
 
+    //Columnas de la tabla elegida
+    ArrayList<Columna> columnasTablaEnFoco = null;
+
     public PrincipalJFrame() {
         //Creación del JDialog del login
         LoginJDialog ljd = new LoginJDialog(this, true);
-        ljd.setVisible(true);
+        //ljd.setVisible(true);
+        ljd.CrearConexion();
 
         //Una vez logeados, ya tenemos una conexión válida a la base de datos,
         //bajo el esquema que se a proporcionado en el login. Guardamos la
@@ -40,34 +47,19 @@ public class PrincipalJFrame extends javax.swing.JFrame {
         conexion = Conexion.getInstance();
 
         initComponents();
-
         //A algunos componentes que he agregado al JFrame principal, les tengo
         //que inicializar/configurar sus models y otras propiedades. Además, 
         //tengo que configurar los valores que el programa carga por defecto a su
         //inicio. Dichas acciones las realizo en la siguiente función.
         initConfiguracion();
-
     }
 
     private void initConfiguracion() {
         //Combobox
         dcbmTablas = (DefaultComboBoxModel<String>) jComboBoxTablas.getModel();
-        dcbmCampos = (DefaultComboBoxModel<String>) jComboBoxCampos.getModel();
+        dcbmCampos = (DefaultComboBoxModel<Columna>) jComboBoxCampos.getModel();
         dcbmOperadorLogico = (DefaultComboBoxModel<String>) jComboBoxOperadorLogico.getModel();
-        dcbmOperadorLogico.addAll(Arrays.asList(new String[]{
-            "=", "<>", ">", "<", ">=", "<=", "BETWEEN", "IN",
-            "IS NULL", "IS NOT NULL", "LIKE", "NOT LIKE",}));
-        
-        /*
-            < : number
-            > : number
-            <> : varchar2, number, date
-            = : varchar2, number, date
-            like : varchar2
-            between : number, date
-        */
         dcbmOperadorRelacional = (DefaultComboBoxModel<String>) jComboBoxOperadorRelacional.getModel();
-        dcbmOperadorRelacional.addAll(Arrays.asList(new String[]{"AND", "OR"}));
 
         //Tablas
         dtmDisponibles = (DefaultTableModel) jTableDisponibles.getModel();
@@ -79,8 +71,12 @@ public class PrincipalJFrame extends javax.swing.JFrame {
         cdm = new ConsultaDeMetadatos();
         cdt = new ConsultaDeTablas();
 
+        //Colecciones 
+        columnasTablaEnFoco = new ArrayList<>();
+
         //Rellenar lista de tablas inicial
         dcbmTablas.addAll(cdm.obtenerNombreTablas());
+
     }
 
     @SuppressWarnings("unchecked")
@@ -116,6 +112,7 @@ public class PrincipalJFrame extends javax.swing.JFrame {
         jComboBoxOperadorLogico = new javax.swing.JComboBox<>();
         jLabelValor2 = new javax.swing.JLabel();
         jTextFieldValor2 = new javax.swing.JTextField();
+        jLabelTipoDato = new javax.swing.JLabel();
         jComboBoxOperadorRelacional = new javax.swing.JComboBox<>();
         jButtonAgregarCondicion = new javax.swing.JButton();
         jScrollPaneCondiciones = new javax.swing.JScrollPane();
@@ -148,9 +145,9 @@ public class PrincipalJFrame extends javax.swing.JFrame {
         jPanel1.add(jLabelTablas);
         jLabelTablas.setBounds(20, 20, 70, 25);
 
-        jComboBoxTablas.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jComboBoxTablasActionPerformed(evt);
+        jComboBoxTablas.addItemListener(new java.awt.event.ItemListener() {
+            public void itemStateChanged(java.awt.event.ItemEvent evt) {
+                jComboBoxTablasItemStateChanged(evt);
             }
         });
         jPanel1.add(jComboBoxTablas);
@@ -246,6 +243,11 @@ public class PrincipalJFrame extends javax.swing.JFrame {
         jPanel1.add(jLabelCampo);
         jLabelCampo.setBounds(550, 20, 55, 25);
 
+        jComboBoxCampos.addItemListener(new java.awt.event.ItemListener() {
+            public void itemStateChanged(java.awt.event.ItemEvent evt) {
+                jComboBoxCamposItemStateChanged(evt);
+            }
+        });
         jPanel1.add(jComboBoxCampos);
         jComboBoxCampos.setBounds(620, 20, 120, 25);
 
@@ -259,6 +261,11 @@ public class PrincipalJFrame extends javax.swing.JFrame {
         jPanel1.add(jLabelOperador);
         jLabelOperador.setBounds(550, 55, 55, 25);
 
+        jComboBoxOperadorLogico.addItemListener(new java.awt.event.ItemListener() {
+            public void itemStateChanged(java.awt.event.ItemEvent evt) {
+                jComboBoxOperadorLogicoItemStateChanged(evt);
+            }
+        });
         jPanel1.add(jComboBoxOperadorLogico);
         jComboBoxOperadorLogico.setBounds(620, 55, 120, 25);
 
@@ -268,10 +275,19 @@ public class PrincipalJFrame extends javax.swing.JFrame {
         jPanel1.add(jTextFieldValor2);
         jTextFieldValor2.setBounds(850, 55, 120, 25);
 
+        jLabelTipoDato.setText("El tipo del dato elegido es: ");
+        jPanel1.add(jLabelTipoDato);
+        jLabelTipoDato.setBounds(510, 90, 230, 25);
+
         jPanel1.add(jComboBoxOperadorRelacional);
         jComboBoxOperadorRelacional.setBounds(770, 90, 70, 25);
 
         jButtonAgregarCondicion.setText("+");
+        jButtonAgregarCondicion.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonAgregarCondicionActionPerformed(evt);
+            }
+        });
         jPanel1.add(jButtonAgregarCondicion);
         jButtonAgregarCondicion.setBounds(880, 90, 40, 25);
 
@@ -388,19 +404,77 @@ public class PrincipalJFrame extends javax.swing.JFrame {
             modelDestino.addRow(new Object[]{modelOrigen.getValueAt(i, 0)});
         }
     }
-    
-    private void rellenarComboBoxConTabla(JTable tablaOrigen, JComboBox comboBoxDestino){
-        //tablaOrigen
+
+    private void modificarInputsDeCondiciones(String tipoOperador) {
+        //Ya que el tipo de condicionales más habituales quizás sean los de
+        //comparación (=, <>, <, >, <=, >=), voy a establecerlos por defecto
+        //y en caso de ser otro (LIKE, NULL, BETWEEN, etc), procederé a
+        //realizar los cambios necesarios.
+        jTextFieldValor1.setVisible(true);
+        jLabelValor1.setVisible(true);
+        jTextFieldValor2.setVisible(false);
+        jLabelValor2.setVisible(false);
+        //El enum es necesario para saber la estructura del condicional 
+        //sobre el que se va a trabajar (para agregar comillas, %, el AND de
+        //los BETWEEN, etc).
+        Defectos.tipoDeCondicional = TipoDeCondicional.TIPO_COMPARACION;
+
+        if (tipoOperador.equals("IS NULL") || tipoOperador.equals("IS NOT NULL")) {
+            jTextFieldValor1.setVisible(false);
+            jLabelValor1.setVisible(false);
+            Defectos.tipoDeCondicional = TipoDeCondicional.TIPO_NULL;
+        } else {
+            if (tipoOperador.equals("BETWEEN") || tipoOperador.equals("NOT BETWEEN")) {
+                jTextFieldValor2.setVisible(true);
+                jLabelValor2.setVisible(false);
+                Defectos.tipoDeCondicional = TipoDeCondicional.TIPO_BETWEEN;
+            } else {
+                if (tipoOperador.equals("LIKE") || tipoOperador.equals("NOT LIKE")) {
+                    Defectos.tipoDeCondicional = TipoDeCondicional.TIPO_LIKE;
+                }
+            }
+        }
     }
 
-    private void jComboBoxTablasActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jComboBoxTablasActionPerformed
+    private void reiniciarTodoElFormulario() {
+        //Cada vez que se cambie de tabla, se debe reestablecer a defecto
+        //todos los valores y elementos del formulario, excepto la tabla de 
+        //resultados final.
         limpiarTabla(dtmDisponibles);
         limpiarTabla(dtmTomados);
-        ArrayList<String> nombreColumnas = cdm.obtenerNombreColumnasDeTabla((String) dcbmTablas.getSelectedItem());
-        for (String columna : nombreColumnas) {
-            dtmDisponibles.addRow(new String[]{columna});
+        limpiarTabla(dtmCondiciones);
+        dcbmCampos.removeAllElements();
+        dcbmOperadorLogico.removeAllElements();
+        dcbmOperadorRelacional.removeAllElements();
+        jLabelValor1.setVisible(true);
+        jTextFieldValor1.setText("");
+        jTextFieldValor1.setVisible(true);
+        jLabelValor2.setVisible(true);
+        jTextFieldValor2.setText("");
+        jTextFieldValor2.setVisible(true);
+        jTextAreaSentencia.setText("");
+        Defectos.tipoDeCondicional = TipoDeCondicional.NO_ASIGNADO;
+    }
+
+    private String obtenerLineaCondicional() {
+        StringBuilder sb = new StringBuilder();
+        sb.append(((Columna) dcbmCampos.getSelectedItem()).getNombreColumna());
+        switch (Defectos.tipoDeCondicional) {
+            case TIPO_COMPARACION:
+                sb.append(" ").append((String) dcbmOperadorLogico.getSelectedItem())
+                        .append(" '").append(jTextFieldValor1.getText()).append("'");
+                break;
+            case TIPO_LIKE:
+                break;
+            case TIPO_NULL:
+                break;
+            case TIPO_BETWEEN:
+                break;
+            case NO_ASIGNADO:
+                break;
         }
-    }//GEN-LAST:event_jComboBoxTablasActionPerformed
+        return sb.toString();
+    }
 
     private void jButtonListaTomarUnoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonListaTomarUnoActionPerformed
         traspasoDeSeleccionados(jTableDisponibles, dtmDisponibles, dtmTomados);
@@ -419,6 +493,53 @@ public class PrincipalJFrame extends javax.swing.JFrame {
         traspasoDeTodos(dtmTomados, dtmDisponibles);
         limpiarTabla(dtmTomados);
     }//GEN-LAST:event_jButtonListaQuitarTodosActionPerformed
+
+    private void jComboBoxTablasItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_jComboBoxTablasItemStateChanged
+        if (evt.getStateChange() == ItemEvent.SELECTED) {
+            reiniciarTodoElFormulario();
+            columnasTablaEnFoco = cdm.obtenerMetasDeColumnasDeTabla((String) dcbmTablas.getSelectedItem());
+            for (Columna columna : columnasTablaEnFoco) {
+                dtmDisponibles.addRow(new String[]{columna.getNombreColumna()});
+            }
+            dcbmCampos.addAll(columnasTablaEnFoco);
+        }
+    }//GEN-LAST:event_jComboBoxTablasItemStateChanged
+
+    private void jComboBoxCamposItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_jComboBoxCamposItemStateChanged
+        if (evt.getStateChange() == ItemEvent.SELECTED) {
+            String tipoDatoSql = ((Columna) dcbmCampos.getSelectedItem()).getNombreTipo();
+            dcbmOperadorLogico.removeAllElements();
+
+            //Vamos a trabajar con 3 tipos de datos SQL, que son: NUMBER, VARCHAR2 y
+            //DATE. En un proyecto mayor, habría más tipos de datos, y habría
+            //que realizar una adaptacións más exhaustiva, pero en este proyecto,
+            //me voy a centrar en adecuar los operadores a estos tres tipos de casos.
+            //if(tipoDatoSql)
+            jLabelTipoDato.setText("El tipo del dato elegido es: " + tipoDatoSql);
+            if (tipoDatoSql.equals("NUMBER") || tipoDatoSql.equals("DATE")) {
+                dcbmOperadorLogico.addAll(Defectos.OP_LOGICO_NUMBER_Y_DATE);
+            } else {
+                dcbmOperadorLogico.addAll(Defectos.OP_LOGICO_VARCHAR2);
+            }
+        }
+     }//GEN-LAST:event_jComboBoxCamposItemStateChanged
+
+    private void jComboBoxOperadorLogicoItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_jComboBoxOperadorLogicoItemStateChanged
+        if (evt.getStateChange() == ItemEvent.SELECTED) {
+            if (dcbmOperadorRelacional.getSize() == 0) {
+                dcbmOperadorRelacional.addAll(Defectos.OP_RELACIONAL);
+            }
+            String tipoOperador = ((String) dcbmOperadorLogico.getSelectedItem());
+            //Se modifica el tipo de distribución de los inputs que personalizan
+            //los condicionales en base a tipo de operador seleccionado:
+            modificarInputsDeCondiciones(tipoOperador);
+        }
+    }//GEN-LAST:event_jComboBoxOperadorLogicoItemStateChanged
+
+    private void jButtonAgregarCondicionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonAgregarCondicionActionPerformed
+        String sentenciaCondicional = obtenerLineaCondicional();
+        System.out.println(sentenciaCondicional);
+    }//GEN-LAST:event_jButtonAgregarCondicionActionPerformed
 
     public static void main(String args[]) {
         try {
@@ -453,7 +574,7 @@ public class PrincipalJFrame extends javax.swing.JFrame {
     private javax.swing.JButton jButtonListaTomarTodos;
     private javax.swing.JButton jButtonListaTomarUno;
     private javax.swing.JButton jButtonQuitarCondicion;
-    private javax.swing.JComboBox<String> jComboBoxCampos;
+    private javax.swing.JComboBox<Columna> jComboBoxCampos;
     private javax.swing.JComboBox<String> jComboBoxOperadorLogico;
     private javax.swing.JComboBox<String> jComboBoxOperadorRelacional;
     private javax.swing.JComboBox<String> jComboBoxTablas;
@@ -461,6 +582,7 @@ public class PrincipalJFrame extends javax.swing.JFrame {
     private javax.swing.JLabel jLabelOperador;
     private javax.swing.JLabel jLabelSentenciaSql;
     private javax.swing.JLabel jLabelTablas;
+    private javax.swing.JLabel jLabelTipoDato;
     private javax.swing.JLabel jLabelValor1;
     private javax.swing.JLabel jLabelValor2;
     private javax.swing.JPanel jPanel1;

@@ -29,10 +29,11 @@ public class Conexion {
      * recibirá la Connection.
      */
     public Conexion(String server, String port, String user, String pass) {
-        Conexion.server = server;
-        Conexion.port = port;
-        Conexion.user = user;
-        Conexion.pass = pass;
+        
+        Conexion.server = server.trim();
+        Conexion.port = port.trim();
+        Conexion.user = user.trim();        
+        Conexion.pass = pass.trim();
     }
 
     /**

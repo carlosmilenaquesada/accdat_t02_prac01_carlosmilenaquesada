@@ -11,9 +11,10 @@ public class LoginJDialog extends javax.swing.JDialog {
     public LoginJDialog(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
         initComponents();
+        
     }
 
-    private void CrearConexion() {
+    public void CrearConexion() {
         String servidor = /*jTextFieldServidor.getText()*/ "localhost";
         String puerto = /*jTextFieldPuerto.getText()*/ "1521";
         String usuario = /*jTextFieldUsuario.getText()*/ "AD_TEMA02_FICHAJES";
@@ -24,7 +25,7 @@ public class LoginJDialog extends javax.swing.JDialog {
         if (servidor.isEmpty()) {
             camposEscritos = false;
             jTextFieldServidor.setBackground(Defectos.COLOR_ERROR);
-        }
+        }        
         if (puerto.isEmpty()) {
             camposEscritos = false;
             jTextFieldPuerto.setBackground(Defectos.COLOR_ERROR);
@@ -43,7 +44,7 @@ public class LoginJDialog extends javax.swing.JDialog {
                 //En mi caso el esquema al que me conecto tiene el mismo nombre 
                 //que el usuario, pero lo ideal sería pedir tambien el esquema
                 //de conexión en el login.
-                Defectos.CONEXION_ESQUEMA = usuario;
+                Defectos.CONEXION_ESQUEMA = usuario.trim();
                 dispose();
             } else {
                 JOptionPane.showMessageDialog(null, "No se ha establecido"
