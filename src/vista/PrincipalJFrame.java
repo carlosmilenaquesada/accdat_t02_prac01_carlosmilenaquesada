@@ -10,14 +10,10 @@ import java.awt.event.ItemEvent;
 import java.util.ArrayList;
 
 import javax.swing.DefaultComboBoxModel;
-import javax.swing.JComponent;
 import javax.swing.JOptionPane;
 
 import javax.swing.JTable;
-import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
 import javax.swing.table.DefaultTableModel;
-import javax.swing.text.Document;
 import modelo.Columna;
 import vista.Defectos.TipoDeCondicional;
 
@@ -42,9 +38,7 @@ public class PrincipalJFrame extends javax.swing.JFrame {
     //Columnas de la tabla elegida
     ArrayList<Columna> columnasTablaEnFoco = null;
 
-    //Documentos de textField
-    Document documentJtextFieldValor1;
-    Document documentJtextFieldValor2;
+    ArrayList<String> colectorSenteciaSql = null;
 
     boolean layoutCargado = false;
 
@@ -90,43 +84,10 @@ public class PrincipalJFrame extends javax.swing.JFrame {
 
         //Rellenar lista de tablas inicial
         dcbmTablas.addAll(cdm.obtenerNombreTablas());
-
-        documentJtextFieldValor1 = jTextFieldValor1.getDocument();
-        documentJtextFieldValor1.addDocumentListener(new DocumentListener() {
-            @Override
-            public void insertUpdate(DocumentEvent e) {
-
-            }
-
-            @Override
-            public void removeUpdate(DocumentEvent e) {
-                if (jTextFieldValor1.getText().isEmpty()) {
-
-                }
-            }
-
-            @Override
-            public void changedUpdate(DocumentEvent e) {
-            }
-        });
-        documentJtextFieldValor2 = jTextFieldValor2.getDocument();
-        documentJtextFieldValor2.addDocumentListener(new DocumentListener() {
-            @Override
-            public void insertUpdate(DocumentEvent e) {
-
-            }
-
-            @Override
-            public void removeUpdate(DocumentEvent e) {
-                if (jTextFieldValor2.getText().isEmpty()) {
-
-                }
-            }
-
-            @Override
-            public void changedUpdate(DocumentEvent e) {
-            }
-        });
+        if (dcbmTablas.getSize() == 0) {
+            JOptionPane.showMessageDialog(null, "El usuario/esquema proporcionado"
+                    + " existe, pero no tiene tablas registradas.");
+        }
 
     }
 
@@ -409,6 +370,11 @@ public class PrincipalJFrame extends javax.swing.JFrame {
 
         jButtonQuitarCondicion.setText("-");
         jButtonQuitarCondicion.setEnabled(false);
+        jButtonQuitarCondicion.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonQuitarCondicionActionPerformed(evt);
+            }
+        });
         jPanelCreacionCondicionales.add(jButtonQuitarCondicion);
         jButtonQuitarCondicion.setBounds(360, 175, 50, 25);
 
@@ -421,7 +387,6 @@ public class PrincipalJFrame extends javax.swing.JFrame {
         jScrollPaneSentencia.setEnabled(false);
         jScrollPaneSentencia.setFocusable(false);
 
-        jTextAreaSentencia.setEditable(false);
         jTextAreaSentencia.setColumns(20);
         jTextAreaSentencia.setRows(5);
         jTextAreaSentencia.setEnabled(false);
@@ -573,7 +538,6 @@ public class PrincipalJFrame extends javax.swing.JFrame {
 
     private String obtenerLineaCondicional() {
         StringBuilder sb = new StringBuilder();
-        //if(dcbmCampos)
         sb.append(((Columna) dcbmCampos.getSelectedItem()).getNombreColumna());
         switch (Defectos.tipoDeCondicional) {
             case TIPO_COMPARACION:
@@ -581,7 +545,7 @@ public class PrincipalJFrame extends javax.swing.JFrame {
                 if (!jTextFieldValor1.getText().isEmpty()) {
                     sb.append(" ").append((String) dcbmOperadorLogico.getSelectedItem())
                             .append(" '").append(jTextFieldValor1.getText()).append("'");
-                }else{
+                } else {
                     sb.setLength(0);
                 }
                 break;
@@ -590,8 +554,9 @@ public class PrincipalJFrame extends javax.swing.JFrame {
                 break;
             case TIPO_BETWEEN:
                 if (!jTextFieldValor1.getText().isEmpty() && !jTextFieldValor2.getText().isEmpty()) {
-                    sb.append(" ").append((String) dcbmOperadorLogico.getSelectedItem());
-                }else{
+                    sb.append(" ").append((String) dcbmOperadorLogico.getSelectedItem()).append(" ")
+                            .append(jTextFieldValor1.getText()).append(" AND ").append(jTextFieldValor2.getText());
+                } else {
                     sb.setLength(0);
                 }
                 break;
@@ -601,36 +566,51 @@ public class PrincipalJFrame extends javax.swing.JFrame {
         return sb.toString();
     }
 
-    private boolean validarInputsDeCondicional() {
-        boolean habilitar = true;
-        if ((Defectos.tipoDeCondicional.equals(TipoDeCondicional.TIPO_COMPARACION)
-                || Defectos.tipoDeCondicional.equals(TipoDeCondicional.TIPO_LIKE))
-                && jTextFieldValor1.getText().isEmpty()) {
-            habilitar = false;
+    private void actualizarSentenciaSql() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("SELECT");
+        if (dtmDisponibles.getRowCount() == 0 || dtmTomados.getRowCount() == 0) {
+            sb.append(" *");
         } else {
-            if (Defectos.tipoDeCondicional.equals(TipoDeCondicional.TIPO_BETWEEN)
-                    && (jTextFieldValor1.getText().isEmpty() || jTextFieldValor2.getText().isEmpty())) {
-                habilitar = false;
+            for (int i = 0; i < dtmTomados.getRowCount(); i++) {
+                sb.append(" ").append(dtmTomados.getValueAt(i, 0)).append(",");
+            }
+            sb.deleteCharAt(sb.length() - 1);
+        }
+        sb.append(" FROM ");
+        sb.append(dcbmTablas.getSelectedItem());
+        if (dtmCondiciones.getRowCount() > 0) {
+            sb.append(" WHERE ").append(dtmCondiciones.getValueAt(0, 0));
+            for (int i = 1; i < dtmCondiciones.getRowCount(); i++) {
+                sb.append(" ").append(dtmCondiciones.getValueAt(i - 1, 1)).append(" ").append(dtmCondiciones.getValueAt(i, 0));
             }
         }
-        return habilitar;
+        sb.append(";");
+
+        jTextAreaSentencia.setText(sb.toString());
     }
+
+
     private void jButtonListaTomarUnoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonListaTomarUnoActionPerformed
         traspasoDeSeleccionados(jTableDisponibles, dtmDisponibles, dtmTomados);
+        actualizarSentenciaSql();
     }//GEN-LAST:event_jButtonListaTomarUnoActionPerformed
 
     private void jButtonListaTomarTodosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonListaTomarTodosActionPerformed
         traspasoDeTodos(dtmDisponibles, dtmTomados);
         limpiarTabla(dtmDisponibles);
+        actualizarSentenciaSql();
     }//GEN-LAST:event_jButtonListaTomarTodosActionPerformed
 
     private void jButtonListaQuitarUnoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonListaQuitarUnoActionPerformed
         traspasoDeSeleccionados(jTableTomados, dtmTomados, dtmDisponibles);
+        actualizarSentenciaSql();
     }//GEN-LAST:event_jButtonListaQuitarUnoActionPerformed
 
     private void jButtonListaQuitarTodosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonListaQuitarTodosActionPerformed
         traspasoDeTodos(dtmTomados, dtmDisponibles);
         limpiarTabla(dtmTomados);
+        actualizarSentenciaSql();
     }//GEN-LAST:event_jButtonListaQuitarTodosActionPerformed
 
     private void jComboBoxTablasItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_jComboBoxTablasItemStateChanged
@@ -642,15 +622,19 @@ public class PrincipalJFrame extends javax.swing.JFrame {
                 for (Component c : jPanelCreacionCondicionales.getComponents()) {
                     c.setEnabled(true);
                 }
+                jScrollPaneSentencia.setEnabled(true);
+                jTextAreaSentencia.setEnabled(true);
                 layoutCargado = true;
+            } else {
+                reiniciarTodoElFormulario();
             }
-            reiniciarTodoElFormulario();
             columnasTablaEnFoco = cdm.obtenerMetasDeColumnasDeTabla((String) dcbmTablas.getSelectedItem());
             for (Columna columna : columnasTablaEnFoco) {
                 dtmDisponibles.addRow(new String[]{columna.getNombreColumna()});
             }
             dcbmCampos.addAll(columnasTablaEnFoco);
             dcbmCampos.setSelectedItem(dcbmCampos.getElementAt(0));
+            actualizarSentenciaSql();
         }
     }//GEN-LAST:event_jComboBoxTablasItemStateChanged
 
@@ -686,12 +670,22 @@ public class PrincipalJFrame extends javax.swing.JFrame {
     private void jButtonAgregarCondicionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonAgregarCondicionActionPerformed
         String sentenciaCondicional = obtenerLineaCondicional();
         if (!sentenciaCondicional.isEmpty()) {
-            System.out.println(sentenciaCondicional);
             dtmCondiciones.addRow(new Object[]{sentenciaCondicional, dcbmOperadorRelacional.getSelectedItem()});
+            actualizarSentenciaSql();
         } else {
             JOptionPane.showMessageDialog(null, "Debe proporcionar una consulta correcta.");
         }
     }//GEN-LAST:event_jButtonAgregarCondicionActionPerformed
+
+    private void jButtonQuitarCondicionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonQuitarCondicionActionPerformed
+        int rowSeleccionada = jTableCondiciones.getSelectedRow();
+        if (rowSeleccionada > -1) {
+            dtmCondiciones.removeRow(rowSeleccionada);
+            actualizarSentenciaSql();
+        } else {
+            JOptionPane.showMessageDialog(null, "Debe seleccionar una fila para borrar.");
+        }
+    }//GEN-LAST:event_jButtonQuitarCondicionActionPerformed
 
     public static void main(String args[]) {
         try {

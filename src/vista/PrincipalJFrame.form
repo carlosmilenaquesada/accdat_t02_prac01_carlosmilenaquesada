@@ -451,6 +451,9 @@
                 <Property name="text" type="java.lang.String" value="-"/>
                 <Property name="enabled" type="boolean" value="false"/>
               </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jButtonQuitarCondicionActionPerformed"/>
+              </Events>
               <Constraints>
                 <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
                   <AbsoluteConstraints x="360" y="175" width="50" height="25"/>
@@ -500,7 +503,6 @@
               <SubComponents>
                 <Component class="javax.swing.JTextArea" name="jTextAreaSentencia">
                   <Properties>
-                    <Property name="editable" type="boolean" value="false"/>
                     <Property name="columns" type="int" value="20"/>
                     <Property name="rows" type="int" value="5"/>
                     <Property name="enabled" type="boolean" value="false"/>
@@ -547,9 +549,6 @@
           <SubComponents>
             <Container class="javax.swing.JScrollPane" name="jScrollPaneTablaResultado">
               <Properties>
-                <Property name="columnHeaderView" type="java.awt.Component" editor="org.netbeans.modules.form.ComponentChooserEditor">
-                  <ComponentRef name="default"/>
-                </Property>
                 <Property name="focusable" type="boolean" value="false"/>
               </Properties>
               <AuxValues>
