@@ -19,6 +19,11 @@ import javax.swing.table.DefaultTableModel;
 import modelo.Columna;
 import vista.Defectos.TipoDeCondicional;
 
+import com.google.gson.*;
+import java.util.Arrays;
+import java.util.List;
+import javax.swing.table.TableColumn;
+
 public class PrincipalJFrame extends javax.swing.JFrame {
 
     //Creación de mis variables-------------------------------------------------
@@ -42,6 +47,7 @@ public class PrincipalJFrame extends javax.swing.JFrame {
 
     ArrayList<String> colectorSenteciaSql = null;
 
+    ArrayList<Columna> cabecerasTablaFinal = null;
     boolean layoutCargado = false;
 
     public PrincipalJFrame() {
@@ -90,6 +96,8 @@ public class PrincipalJFrame extends javax.swing.JFrame {
             JOptionPane.showMessageDialog(null, "El usuario/esquema proporcionado"
                     + " existe, pero no tiene tablas registradas.");
         }
+        
+        cabecerasTablaFinal = new ArrayList<>();
 
     }
 
@@ -150,7 +158,8 @@ public class PrincipalJFrame extends javax.swing.JFrame {
                 return false;
             }
         };
-        jButtonExportarTabla = new javax.swing.JButton();
+        jButtonExportarTablaAJson = new javax.swing.JButton();
+        jButtonExportarTablaAJson1 = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Tema 02. Práctica 01. Metadatos");
@@ -445,10 +454,25 @@ public class PrincipalJFrame extends javax.swing.JFrame {
         jPanelTablaExportacion.add(jScrollPaneTablaResultado);
         jScrollPaneTablaResultado.setBounds(10, 20, 805, 190);
 
-        jButtonExportarTabla.setText("Exportar");
-        jButtonExportarTabla.setEnabled(false);
-        jPanelTablaExportacion.add(jButtonExportarTabla);
-        jButtonExportarTabla.setBounds(820, 60, 90, 25);
+        jButtonExportarTablaAJson.setText("Exportar");
+        jButtonExportarTablaAJson.setEnabled(false);
+        jButtonExportarTablaAJson.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonExportarTablaAJsonActionPerformed(evt);
+            }
+        });
+        jPanelTablaExportacion.add(jButtonExportarTablaAJson);
+        jButtonExportarTablaAJson.setBounds(820, 60, 90, 25);
+
+        jButtonExportarTablaAJson1.setText("Exportar");
+        jButtonExportarTablaAJson1.setEnabled(false);
+        jButtonExportarTablaAJson1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonExportarTablaAJson1ActionPerformed(evt);
+            }
+        });
+        jPanelTablaExportacion.add(jButtonExportarTablaAJson1);
+        jButtonExportarTablaAJson1.setBounds(820, 60, 90, 25);
 
         jPanelPrincipal.add(jPanelTablaExportacion);
         jPanelTablaExportacion.setBounds(10, 415, 920, 220);
@@ -545,7 +569,7 @@ public class PrincipalJFrame extends javax.swing.JFrame {
 
     private String obtenerLineaCondicional() {
         StringBuilder sb = new StringBuilder();
-        sb.append(((Columna) dcbmCampos.getSelectedItem()).getNombreColumna());
+        sb.append(((Columna) dcbmCampos.getSelectedItem()).getName());
         switch (Defectos.tipoDeCondicional) {
             case TIPO_COMPARACION:
             case TIPO_LIKE:
@@ -638,7 +662,7 @@ public class PrincipalJFrame extends javax.swing.JFrame {
             }
             columnasTablaEnFoco = cde.obtenerMetasDeColumnasDeTabla((String) dcbmTablas.getSelectedItem());
             for (Columna columna : columnasTablaEnFoco) {
-                dtmDisponibles.addRow(new String[]{columna.getNombreColumna()});
+                dtmDisponibles.addRow(new String[]{columna.getName()});
             }
             dcbmCampos.addAll(columnasTablaEnFoco);
             dcbmCampos.setSelectedItem(dcbmCampos.getElementAt(0));
@@ -649,7 +673,7 @@ public class PrincipalJFrame extends javax.swing.JFrame {
 
     private void jComboBoxCamposItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_jComboBoxCamposItemStateChanged
         if (evt.getStateChange() == ItemEvent.SELECTED) {
-            String tipoDatoSql = ((Columna) dcbmCampos.getSelectedItem()).getNombreTipo();
+            String tipoDatoSql = ((Columna) dcbmCampos.getSelectedItem()).getType();
             dcbmOperadorLogico.removeAllElements();
 
             //Vamos a trabajar con 3 tipos de datos SQL, que son: NUMBER, VARCHAR2 y
@@ -703,7 +727,8 @@ public class PrincipalJFrame extends javax.swing.JFrame {
         try {
             String sentencia = jTextAreaSentencia.getText();
             sentencia = sentencia.substring(0, sentencia.length() - 1);
-            dtmTablaResultado.setColumnIdentifiers(cdt.obtenerCabeceraParaTablaFinal(sentencia).toArray());
+            cabecerasTablaFinal = cdt.obtenerCabeceraParaTablaFinal(sentencia);
+            dtmTablaResultado.setColumnIdentifiers(cabecerasTablaFinal.toArray());
             ResultSet rs = cdt.obtenerContenidoParaTablaFinal(sentencia);
             while (rs.next()) {
                 ArrayList<Object> contenidoRow = new ArrayList<>();
@@ -712,10 +737,33 @@ public class PrincipalJFrame extends javax.swing.JFrame {
                 }
                 dtmTablaResultado.addRow(contenidoRow.toArray());
             }
+            jButtonExportarTablaAJson.setEnabled(true);
         } catch (SQLException ex) {
             Logger.getLogger(PrincipalJFrame.class.getName()).log(Level.SEVERE, null, ex);
         }
     }//GEN-LAST:event_jButtonEjecutarSentenciaActionPerformed
+
+    private void jButtonExportarTablaAJsonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonExportarTablaAJsonActionPerformed
+       
+        Gson gson = new Gson();
+        
+        ArrayList<Object> estructuraJson = new ArrayList<>();
+        estructuraJson.add(cabecerasTablaFinal);
+        ArrayList<Object> auxiliar = new ArrayList<>();
+        for(int filaTabla = 0; filaTabla < jTableTablaResultado.getRowCount(); filaTabla++){
+            for(int columnaTabla = 0; columnaTabla < jTableTablaResultado.getColumnCount(); columnaTabla++){
+                    auxiliar.add(jTableTablaResultado.getValueAt(filaTabla, columnaTabla));
+            }
+            estructuraJson.add(auxiliar);
+            auxiliar = new ArrayList<>();
+        }
+        String json = gson.toJson(estructuraJson);
+        System.out.println(json);
+    }//GEN-LAST:event_jButtonExportarTablaAJsonActionPerformed
+
+    private void jButtonExportarTablaAJson1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonExportarTablaAJson1ActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jButtonExportarTablaAJson1ActionPerformed
 
     public static void main(String args[]) {
         try {
@@ -744,7 +792,8 @@ public class PrincipalJFrame extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButtonAgregarCondicion;
     private javax.swing.JButton jButtonEjecutarSentencia;
-    private javax.swing.JButton jButtonExportarTabla;
+    private javax.swing.JButton jButtonExportarTablaAJson;
+    private javax.swing.JButton jButtonExportarTablaAJson1;
     private javax.swing.JButton jButtonListaQuitarTodos;
     private javax.swing.JButton jButtonListaQuitarUno;
     private javax.swing.JButton jButtonListaTomarTodos;

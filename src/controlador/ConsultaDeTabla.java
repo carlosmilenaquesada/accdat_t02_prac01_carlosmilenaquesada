@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.sql.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import modelo.Columna;
 
 public class ConsultaDeTabla {
 
@@ -14,14 +15,15 @@ public class ConsultaDeTabla {
 
     }
 
-    public ArrayList<String> obtenerCabeceraParaTablaFinal(String consulta) {
-        ArrayList<String> cabeceras = new ArrayList<>();
+    public ArrayList<Columna> obtenerCabeceraParaTablaFinal(String consulta) {
+        ArrayList<Columna> cabeceras = new ArrayList<>();
         try {
             Statement st = Conexion.getInstance().createStatement();
             ResultSetMetaData rsmd = st.executeQuery(consulta).getMetaData();
+
             int cantidadColumnas = rsmd.getColumnCount();
             for (int i = 1; i <= cantidadColumnas; i++) {
-                cabeceras.add(rsmd.getColumnName(i));
+                cabeceras.add(new Columna(rsmd.getColumnName(i), rsmd.getColumnTypeName(i)));
             }
 
         } catch (SQLException ex) {
@@ -40,6 +42,7 @@ public class ConsultaDeTabla {
             Logger.getLogger(ConsultaDeTabla.class.getName()).log(Level.SEVERE, null, ex);
         }
         return rs;
-
     }
+
+
 }

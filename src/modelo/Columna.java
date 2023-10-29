@@ -2,25 +2,25 @@ package modelo;
 
 public class Columna {
 
-    private String nombreColumna;
-    private String nombreTipo;
+    private String name;
+    private String type;
 
     public Columna(String nombreColumna, String nombreTipo) {
-        this.nombreColumna = nombreColumna;
-        this.nombreTipo = nombreTipo;
+        this.name = nombreColumna;
+        this.type = nombreTipo;
     }
 
     @Override
     public String toString() {
-        return nombreColumna;
+        return name;
     }
 
-    public String getNombreColumna() {
-        return nombreColumna;
+    public String getName() {
+        return name;
     }
 
-    public String getNombreTipo() {
-        return nombreTipo;
+    public String getType() {
+        return type;
     }
 
 }
