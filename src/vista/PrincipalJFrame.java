@@ -20,9 +20,22 @@ import modelo.Columna;
 import vista.Defectos.TipoDeCondicional;
 
 import com.google.gson.*;
+import java.awt.Insets;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.ObjectOutputStream;
+import java.nio.file.Files;
 import java.util.Arrays;
 import java.util.List;
+import javax.swing.JFileChooser;
+import javax.swing.JFormattedTextField;
+import javax.swing.JFormattedTextField.AbstractFormatterFactory;
+import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.table.TableColumn;
+import modelo.TablaDinamica;
 
 public class PrincipalJFrame extends javax.swing.JFrame {
 
@@ -44,12 +57,12 @@ public class PrincipalJFrame extends javax.swing.JFrame {
 
     //Columnas de la tabla elegida
     ArrayList<Columna> columnasTablaEnFoco = null;
-
+    
     ArrayList<String> colectorSenteciaSql = null;
-
+    
     ArrayList<Columna> cabecerasTablaFinal = null;
     boolean layoutCargado = false;
-
+    
     public PrincipalJFrame() {
         //Creación del JDialog del login
         LoginJDialog ljd = new LoginJDialog(this, true);
@@ -60,16 +73,16 @@ public class PrincipalJFrame extends javax.swing.JFrame {
         //bajo el esquema que se a proporcionado en el login. Guardamos la
         //conexión el en un objeto para poder trabajar con ella.
         conexion = Conexion.getInstance();
-
+        
         initComponents();
         //A algunos componentes que he agregado al JFrame principal, les tengo
         //que inicializar/configurar sus models y otras propiedades. Además, 
         //tengo que configurar los valores que el programa carga por defecto a su
         //inicio. Dichas acciones las realizo en la siguiente función.
         initConfiguracion();
-
+        
     }
-
+    
     private void initConfiguracion() {
         //Combobox
         dcbmTablas = (DefaultComboBoxModel<String>) jComboBoxTablas.getModel();
@@ -98,9 +111,9 @@ public class PrincipalJFrame extends javax.swing.JFrame {
         }
         
         cabecerasTablaFinal = new ArrayList<>();
-
+        comillasVisibles(false);
     }
-
+    
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
@@ -131,6 +144,8 @@ public class PrincipalJFrame extends javax.swing.JFrame {
         jLabelCampo = new javax.swing.JLabel();
         jComboBoxCampos = new javax.swing.JComboBox<>();
         jLabelValor1 = new javax.swing.JLabel();
+        jLabel1 = new javax.swing.JLabel();
+        jLabel2 = new javax.swing.JLabel();
         jTextFieldValor1 = new javax.swing.JTextField();
         jLabelOperador = new javax.swing.JLabel();
         jComboBoxOperadorLogico = new javax.swing.JComboBox<>();
@@ -158,8 +173,8 @@ public class PrincipalJFrame extends javax.swing.JFrame {
                 return false;
             }
         };
-        jButtonExportarTablaAJson = new javax.swing.JButton();
-        jButtonExportarTablaAJson1 = new javax.swing.JButton();
+        jButtonExportar = new javax.swing.JButton();
+        jFormattedTextField1 = new javax.swing.JFormattedTextField();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Tema 02. Práctica 01. Metadatos");
@@ -307,6 +322,18 @@ public class PrincipalJFrame extends javax.swing.JFrame {
         jPanelCreacionCondicionales.add(jLabelValor1);
         jLabelValor1.setBounds(235, 20, 45, 25);
 
+        jLabel1.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+        jLabel1.setText("'");
+        jPanelCreacionCondicionales.add(jLabel1);
+        jLabel1.setBounds(290, 20, 10, 25);
+
+        jLabel2.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        jLabel2.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+        jLabel2.setText("'");
+        jPanelCreacionCondicionales.add(jLabel2);
+        jLabel2.setBounds(400, 20, 10, 25);
+
         jTextFieldValor1.setEnabled(false);
         jPanelCreacionCondicionales.add(jTextFieldValor1);
         jTextFieldValor1.setBounds(290, 20, 120, 25);
@@ -452,30 +479,24 @@ public class PrincipalJFrame extends javax.swing.JFrame {
         }
 
         jPanelTablaExportacion.add(jScrollPaneTablaResultado);
-        jScrollPaneTablaResultado.setBounds(10, 20, 805, 190);
+        jScrollPaneTablaResultado.setBounds(10, 20, 805, 195);
 
-        jButtonExportarTablaAJson.setText("Exportar");
-        jButtonExportarTablaAJson.setEnabled(false);
-        jButtonExportarTablaAJson.addActionListener(new java.awt.event.ActionListener() {
+        jButtonExportar.setText("Exportar");
+        jButtonExportar.setEnabled(false);
+        jButtonExportar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButtonExportarTablaAJsonActionPerformed(evt);
+                jButtonExportarActionPerformed(evt);
             }
         });
-        jPanelTablaExportacion.add(jButtonExportarTablaAJson);
-        jButtonExportarTablaAJson.setBounds(820, 60, 90, 25);
+        jPanelTablaExportacion.add(jButtonExportar);
+        jButtonExportar.setBounds(820, 105, 90, 25);
 
-        jButtonExportarTablaAJson1.setText("Exportar");
-        jButtonExportarTablaAJson1.setEnabled(false);
-        jButtonExportarTablaAJson1.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButtonExportarTablaAJson1ActionPerformed(evt);
-            }
-        });
-        jPanelTablaExportacion.add(jButtonExportarTablaAJson1);
-        jButtonExportarTablaAJson1.setBounds(820, 60, 90, 25);
+        jFormattedTextField1.setText("jFormattedTextField1");
+        jPanelTablaExportacion.add(jFormattedTextField1);
+        jFormattedTextField1.setBounds(770, 40, 110, 20);
 
         jPanelPrincipal.add(jPanelTablaExportacion);
-        jPanelTablaExportacion.setBounds(10, 415, 920, 220);
+        jPanelTablaExportacion.setBounds(10, 415, 920, 225);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -487,7 +508,7 @@ public class PrincipalJFrame extends javax.swing.JFrame {
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jPanelPrincipal, javax.swing.GroupLayout.PREFERRED_SIZE, 645, javax.swing.GroupLayout.PREFERRED_SIZE)
+            .addComponent(jPanelPrincipal, javax.swing.GroupLayout.PREFERRED_SIZE, 650, javax.swing.GroupLayout.PREFERRED_SIZE)
         );
 
         pack();
@@ -499,7 +520,7 @@ public class PrincipalJFrame extends javax.swing.JFrame {
             dtm.removeRow(i);
         }
     }
-
+    
     private void traspasoDeSeleccionados(JTable tablaOrigen, DefaultTableModel modelOrigen, DefaultTableModel modelDestino) {
         if (tablaOrigen.getSelectedRowCount() >= 1) {
             int[] rowsSeleccionadas = tablaOrigen.getSelectedRows();
@@ -509,13 +530,13 @@ public class PrincipalJFrame extends javax.swing.JFrame {
             }
         }
     }
-
+    
     private void traspasoDeTodos(DefaultTableModel modelOrigen, DefaultTableModel modelDestino) {
         for (int i = modelOrigen.getRowCount() - 1; i >= 0; i--) {
             modelDestino.addRow(new Object[]{modelOrigen.getValueAt(i, 0)});
         }
     }
-
+    
     private void modificarInputsDeCondiciones(String tipoOperador) {
         //Ya que el tipo de condicionales más habituales quizás sean los de
         //comparación (=, <>, <, >, <=, >=), voy a establecerlos por defecto
@@ -529,7 +550,7 @@ public class PrincipalJFrame extends javax.swing.JFrame {
         //sobre el que se va a trabajar (para agregar comillas, %, el AND de
         //los BETWEEN, etc).
         Defectos.tipoDeCondicional = TipoDeCondicional.TIPO_COMPARACION;
-
+        
         if (tipoOperador.equals("IS NULL") || tipoOperador.equals("IS NOT NULL")) {
             jTextFieldValor1.setVisible(false);
             jLabelValor1.setVisible(false);
@@ -546,7 +567,7 @@ public class PrincipalJFrame extends javax.swing.JFrame {
             }
         }
     }
-
+    
     private void reiniciarTodoElFormulario() {
         //Cada vez que se cambie de tabla, se debe reestablecer a defecto
         //todos los valores y elementos del formulario, excepto la tabla de 
@@ -566,7 +587,7 @@ public class PrincipalJFrame extends javax.swing.JFrame {
         jTextAreaSentencia.setText("");
         Defectos.tipoDeCondicional = TipoDeCondicional.NO_ASIGNADO;
     }
-
+    
     private String obtenerLineaCondicional() {
         StringBuilder sb = new StringBuilder();
         sb.append(((Columna) dcbmCampos.getSelectedItem()).getName());
@@ -596,7 +617,7 @@ public class PrincipalJFrame extends javax.swing.JFrame {
         }
         return sb.toString();
     }
-
+    
     private void actualizarSentenciaSql() {
         StringBuilder sb = new StringBuilder();
         sb.append("SELECT");
@@ -617,10 +638,21 @@ public class PrincipalJFrame extends javax.swing.JFrame {
             }
         }
         sb.append(";");
-
+        
         jTextAreaSentencia.setText(sb.toString());
     }
-
+    
+    private void comillasVisibles(boolean aFlag) {
+        if (aFlag) {
+            jLabel1.setVisible(true);
+            jLabel2.setVisible(true);
+            jTextFieldValor1.setMargin(new Insets(2, 10, 2, 10));
+        } else {
+            jLabel1.setVisible(false);
+            jLabel2.setVisible(false);
+            jTextFieldValor1.setMargin(new Insets(2, 2, 2, 2));
+        }
+    }
 
     private void jButtonListaTomarUnoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonListaTomarUnoActionPerformed
         traspasoDeSeleccionados(jTableDisponibles, dtmDisponibles, dtmTomados);
@@ -666,7 +698,7 @@ public class PrincipalJFrame extends javax.swing.JFrame {
             }
             dcbmCampos.addAll(columnasTablaEnFoco);
             dcbmCampos.setSelectedItem(dcbmCampos.getElementAt(0));
-
+            
             actualizarSentenciaSql();
         }
     }//GEN-LAST:event_jComboBoxTablasItemStateChanged
@@ -680,11 +712,24 @@ public class PrincipalJFrame extends javax.swing.JFrame {
             //DATE. En un proyecto mayor, habría más tipos de datos, y habría
             //que realizar una adaptación más exhaustiva, pero en este proyecto,
             //me voy a centrar en adecuar los operadores a estos tres tipos de casos.
-            if (tipoDatoSql.equals("NUMBER") || tipoDatoSql.equals("DATE")) {
-                dcbmOperadorLogico.addAll(Defectos.OP_LOGICO_NUMBER_Y_DATE);
-            } else {
-                dcbmOperadorLogico.addAll(Defectos.OP_LOGICO_VARCHAR2);
+            comillasVisibles(false);
+            switch (tipoDatoSql) {
+                case "NUMBER":
+                    dcbmOperadorLogico.addAll(Defectos.OP_LOGICO_NUMBER_Y_DATE);
+                    
+                    break;
+                case "DATE":
+                    dcbmOperadorLogico.addAll(Defectos.OP_LOGICO_NUMBER_Y_DATE);
+                    
+                    break;
+                case "VARCHAR2":
+                    dcbmOperadorLogico.addAll(Defectos.OP_LOGICO_VARCHAR2);
+                    comillasVisibles(true);
+                    break;
+                default:
+                
             }
+            
             dcbmOperadorLogico.setSelectedItem(dcbmOperadorLogico.getElementAt(0));
             dcbmOperadorRelacional.addAll(Defectos.OP_RELACIONAL);
             dcbmOperadorRelacional.setSelectedItem(dcbmOperadorRelacional.getElementAt(0));
@@ -737,34 +782,123 @@ public class PrincipalJFrame extends javax.swing.JFrame {
                 }
                 dtmTablaResultado.addRow(contenidoRow.toArray());
             }
-            jButtonExportarTablaAJson.setEnabled(true);
+            jButtonExportar.setEnabled(true);
         } catch (SQLException ex) {
             Logger.getLogger(PrincipalJFrame.class.getName()).log(Level.SEVERE, null, ex);
         }
     }//GEN-LAST:event_jButtonEjecutarSentenciaActionPerformed
 
-    private void jButtonExportarTablaAJsonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonExportarTablaAJsonActionPerformed
-       
-        Gson gson = new Gson();
-        
-        ArrayList<Object> estructuraJson = new ArrayList<>();
-        estructuraJson.add(cabecerasTablaFinal);
-        ArrayList<Object> auxiliar = new ArrayList<>();
-        for(int filaTabla = 0; filaTabla < jTableTablaResultado.getRowCount(); filaTabla++){
-            for(int columnaTabla = 0; columnaTabla < jTableTablaResultado.getColumnCount(); columnaTabla++){
-                    auxiliar.add(jTableTablaResultado.getValueAt(filaTabla, columnaTabla));
+    private void jButtonExportarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonExportarActionPerformed
+        File file = obtenerFileParaGuardar();
+        if (file != null && file.exists() && file.isFile() && file.canWrite()) {
+            if (file.toString().toLowerCase().endsWith("json")) {
+                exportarArchivoJSON(file, generarObjetoTablaDinamica(cabecerasTablaFinal, jTableTablaResultado));
+            } else {
+                exportarArchivoSerializedObject(file, generarObjetoTablaDinamica(cabecerasTablaFinal, jTableTablaResultado));
             }
-            estructuraJson.add(auxiliar);
-            auxiliar = new ArrayList<>();
         }
-        String json = gson.toJson(estructuraJson);
-        System.out.println(json);
-    }//GEN-LAST:event_jButtonExportarTablaAJsonActionPerformed
-
-    private void jButtonExportarTablaAJson1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonExportarTablaAJson1ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jButtonExportarTablaAJson1ActionPerformed
-
+    }//GEN-LAST:event_jButtonExportarActionPerformed
+    private TablaDinamica generarObjetoTablaDinamica(ArrayList<Columna> cabeceraTabla, JTable contenidoTabla) {
+        
+        TablaDinamica td = new TablaDinamica();
+        td.setCabeceraTabla(cabeceraTabla);
+        
+        ArrayList<Object> filas = new ArrayList<>();
+        ArrayList<Object> celdas = new ArrayList<>();
+        
+        for (int filaTabla = 0; filaTabla < contenidoTabla.getRowCount(); filaTabla++) {
+            for (int columnaTabla = 0; columnaTabla < contenidoTabla.getColumnCount(); columnaTabla++) {
+                celdas.add(contenidoTabla.getValueAt(filaTabla, columnaTabla));
+            }
+            filas.add(celdas);
+            //para limpiar 'celdas' y poder reutilizar la colección en cada ciclo
+            //del for, debe hacerse usando new ArrayList, ya que si se usa
+            //clear, remove ó removeAll, se borrarán los contenidos que le hagan
+            //referencia y en filas también desaparece.
+            celdas = new ArrayList<>();
+        }
+        td.setContenidoTabla(filas);
+        return td;
+    }
+    
+    private File obtenerFileParaGuardar() {
+        //Esta función abre un JFileChooser que nos permite crear o seleccionar
+        //una referencia a un File. Además, la he configurado para que solo
+        //admita crear o seleccionar archivos con extensión .json o .ser (.ser
+        //para objetos serializables de java)
+        File file = null;
+        JFileChooser jfc = new JFileChooser();
+        jfc.setDialogTitle("Seleccione un archivo para guardar...");
+        jfc.setFileSelectionMode(JFileChooser.FILES_ONLY);
+        jfc.setFileFilter(new FileNameExtensionFilter("Archivo Java Serialized Object SER (*.ser)", "ser"));
+        jfc.setFileFilter(new FileNameExtensionFilter("Archivo JavaScript Object Notation JSON (*.json)", "json"));
+        jfc.setAcceptAllFileFilterUsed(false);
+        jfc.showDialog(null, "Guardar");
+        if (jfc.getSelectedFile() != null) {
+            String extensionElegida = "." + ((FileNameExtensionFilter) jfc.getFileFilter()).getExtensions()[0];
+            if (!jfc.getSelectedFile().toString().toLowerCase().endsWith(extensionElegida.toLowerCase())) {
+                file = new File(jfc.getSelectedFile().toString() + extensionElegida);
+            } else {
+                file = new File(jfc.getSelectedFile().toString());
+            }
+            if (!file.exists()) {
+                System.out.println("nulll");
+                try {
+                    file.createNewFile();
+                } catch (IOException ex) {
+                    JOptionPane.showMessageDialog(null, "No se pudo crear el archivo."
+                            + "\nDescripción del error: " + ex.getMessage());
+                }
+            }
+        }
+        return file;
+    }
+    
+    private void exportarArchivoJSON(File archivoDondeGuardar, TablaDinamica objetoAGuardar) {
+        Gson gson = new Gson();
+        String json = gson.toJson(objetoAGuardar);
+        FileWriter fw = null;
+        try {
+            fw = new FileWriter(archivoDondeGuardar);
+            fw.write(json);
+            //oos = new ObjectOutputStream(fos);
+            //oos.writeObject(objetoAGuardar);
+        } catch (IOException ex) {
+            Logger.getLogger(PrincipalJFrame.class.getName()).log(Level.SEVERE, null, ex);
+        } finally {
+            try {
+                if (fw != null) {
+                    fw.close();
+                }
+            } catch (IOException ex) {
+                Logger.getLogger(PrincipalJFrame.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+    }
+    
+    private void exportarArchivoSerializedObject(File archivoDondeGuardar, TablaDinamica objetoAGuardar) {
+        FileOutputStream fos = null;
+        ObjectOutputStream oos = null;
+        try {
+            fos = new FileOutputStream(archivoDondeGuardar);
+            oos = new ObjectOutputStream(fos);
+            oos.writeObject(objetoAGuardar);
+        } catch (IOException ex) {
+            Logger.getLogger(PrincipalJFrame.class.getName()).log(Level.SEVERE, null, ex);
+        } finally {
+            try {
+                if (oos != null) {
+                    oos.close();
+                }
+                if (fos != null) {
+                    fos.close();
+                }
+            } catch (IOException ex) {
+                Logger.getLogger(PrincipalJFrame.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+    }
+    
     public static void main(String args[]) {
         try {
             for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
@@ -792,8 +926,7 @@ public class PrincipalJFrame extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButtonAgregarCondicion;
     private javax.swing.JButton jButtonEjecutarSentencia;
-    private javax.swing.JButton jButtonExportarTablaAJson;
-    private javax.swing.JButton jButtonExportarTablaAJson1;
+    private javax.swing.JButton jButtonExportar;
     private javax.swing.JButton jButtonListaQuitarTodos;
     private javax.swing.JButton jButtonListaQuitarUno;
     private javax.swing.JButton jButtonListaTomarTodos;
@@ -803,6 +936,9 @@ public class PrincipalJFrame extends javax.swing.JFrame {
     private javax.swing.JComboBox<String> jComboBoxOperadorLogico;
     private javax.swing.JComboBox<String> jComboBoxOperadorRelacional;
     private javax.swing.JComboBox<String> jComboBoxTablas;
+    private javax.swing.JFormattedTextField jFormattedTextField1;
+    private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabelCampo;
     private javax.swing.JLabel jLabelOperador;
     private javax.swing.JLabel jLabelTablas;

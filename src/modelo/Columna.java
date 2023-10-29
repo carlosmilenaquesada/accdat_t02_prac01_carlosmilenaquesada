@@ -1,6 +1,8 @@
 package modelo;
 
-public class Columna {
+import java.io.Serializable;
+
+public class Columna implements Serializable {
 
     private String name;
     private String type;
