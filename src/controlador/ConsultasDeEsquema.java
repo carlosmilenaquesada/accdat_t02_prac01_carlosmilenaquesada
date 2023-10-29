@@ -7,14 +7,14 @@ import java.util.logging.Logger;
 import modelo.Columna;
 import vista.Defectos;
 
-public class ConsultaDeMetadatos {
+public class ConsultasDeEsquema {
     //En esta clase se guardan las funciones que se usarán en la recopilación
     //de metadatos, tales como la obtención de nombres de tablas, obtención de
     //columnas, etc.
 
-    private static DatabaseMetaData dbmd = null;
+    private DatabaseMetaData dbmd = null;
 
-    public ConsultaDeMetadatos() {
+    public ConsultasDeEsquema() {
         if (dbmd == null) {
             try {
                 //COMPROBAR SI BORRRO UNA TABLA POR EUJEMPLO, LOS METADATOS SE MODIFICAN O SI UNA VEZ TOMADOS SE MANTIENEN
@@ -27,14 +27,13 @@ public class ConsultaDeMetadatos {
 
     public ArrayList<String> obtenerNombreTablas() {
         ArrayList<String> nombreTablas = new ArrayList<>();
-        ResultSet rs = null;
         try {
-            rs = dbmd.getTables(null, Defectos.CONEXION_ESQUEMA, "%", new String[]{"TABLE"});
+            ResultSet rs = dbmd.getTables(null, Defectos.CONEXION_ESQUEMA, "%", new String[]{"TABLE"});
             while (rs.next()) {
                 nombreTablas.add(rs.getString("TABLE_NAME"));
             }
         } catch (SQLException ex) {
-            Logger.getLogger(ConsultaDeMetadatos.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(ConsultasDeEsquema.class.getName()).log(Level.SEVERE, null, ex);
         }
 
         return nombreTablas;
@@ -49,9 +48,8 @@ public class ConsultaDeMetadatos {
                 columnasTabla.add(new Columna(rs.getString("COLUMN_NAME"), rs.getString("TYPE_NAME")));
             }
         } catch (SQLException ex) {
-            Logger.getLogger(ConsultaDeMetadatos.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(ConsultasDeEsquema.class.getName()).log(Level.SEVERE, null, ex);
         }
         return columnasTabla;
-
     }
 }

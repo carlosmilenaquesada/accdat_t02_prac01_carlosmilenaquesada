@@ -2,12 +2,14 @@ package vista;
 
 import java.sql.*;
 import controlador.Conexion;
-import controlador.ConsultaDeMetadatos;
-import controlador.ConsultaDeTablas;
+import controlador.ConsultasDeEsquema;
+import controlador.ConsultaDeTabla;
 import java.awt.Component;
 
 import java.awt.event.ItemEvent;
 import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JOptionPane;
@@ -22,8 +24,8 @@ public class PrincipalJFrame extends javax.swing.JFrame {
     //Creación de mis variables-------------------------------------------------
     //Conexión y controladores    
     Connection conexion = null;
-    ConsultaDeMetadatos cdm = null;
-    ConsultaDeTablas cdt = null;
+    ConsultasDeEsquema cde = null;
+    ConsultaDeTabla cdt = null;
     //Combo Box model
     DefaultComboBoxModel<String> dcbmTablas;
     DefaultComboBoxModel<Columna> dcbmCampos;
@@ -76,14 +78,14 @@ public class PrincipalJFrame extends javax.swing.JFrame {
         dtmTablaResultado = (DefaultTableModel) jTableTablaResultado.getModel();
 
         //Controladores
-        cdm = new ConsultaDeMetadatos();
-        cdt = new ConsultaDeTablas();
+        cde = new ConsultasDeEsquema();
+        cdt = new ConsultaDeTabla();
 
         //Colecciones 
         columnasTablaEnFoco = new ArrayList<>();
 
         //Rellenar lista de tablas inicial
-        dcbmTablas.addAll(cdm.obtenerNombreTablas());
+        dcbmTablas.addAll(cde.obtenerNombreTablas());
         if (dcbmTablas.getSize() == 0) {
             JOptionPane.showMessageDialog(null, "El usuario/esquema proporcionado"
                     + " existe, pero no tiene tablas registradas.");
@@ -398,6 +400,11 @@ public class PrincipalJFrame extends javax.swing.JFrame {
 
         jButtonEjecutarSentencia.setText("Ejecutar");
         jButtonEjecutarSentencia.setEnabled(false);
+        jButtonEjecutarSentencia.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonEjecutarSentenciaActionPerformed(evt);
+            }
+        });
         jPanelSentenciaSql.add(jButtonEjecutarSentencia);
         jButtonEjecutarSentencia.setBounds(820, 60, 90, 25);
 
@@ -624,16 +631,18 @@ public class PrincipalJFrame extends javax.swing.JFrame {
                 }
                 jScrollPaneSentencia.setEnabled(true);
                 jTextAreaSentencia.setEnabled(true);
+                jButtonEjecutarSentencia.setEnabled(true);
                 layoutCargado = true;
             } else {
                 reiniciarTodoElFormulario();
             }
-            columnasTablaEnFoco = cdm.obtenerMetasDeColumnasDeTabla((String) dcbmTablas.getSelectedItem());
+            columnasTablaEnFoco = cde.obtenerMetasDeColumnasDeTabla((String) dcbmTablas.getSelectedItem());
             for (Columna columna : columnasTablaEnFoco) {
                 dtmDisponibles.addRow(new String[]{columna.getNombreColumna()});
             }
             dcbmCampos.addAll(columnasTablaEnFoco);
             dcbmCampos.setSelectedItem(dcbmCampos.getElementAt(0));
+
             actualizarSentenciaSql();
         }
     }//GEN-LAST:event_jComboBoxTablasItemStateChanged
@@ -678,14 +687,35 @@ public class PrincipalJFrame extends javax.swing.JFrame {
     }//GEN-LAST:event_jButtonAgregarCondicionActionPerformed
 
     private void jButtonQuitarCondicionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonQuitarCondicionActionPerformed
-        int rowSeleccionada = jTableCondiciones.getSelectedRow();
-        if (rowSeleccionada > -1) {
-            dtmCondiciones.removeRow(rowSeleccionada);
+        int[] rowsSeleccionadas = jTableCondiciones.getSelectedRows();
+        if (rowsSeleccionadas.length > 0) {
+            for (int i = rowsSeleccionadas.length - 1; i >= 0; i--) {
+                dtmCondiciones.removeRow(rowsSeleccionadas[i]);
+            }
             actualizarSentenciaSql();
         } else {
-            JOptionPane.showMessageDialog(null, "Debe seleccionar una fila para borrar.");
+            JOptionPane.showMessageDialog(null, "Debe seleccionar o varias filas para borrar.");
         }
     }//GEN-LAST:event_jButtonQuitarCondicionActionPerformed
+
+    private void jButtonEjecutarSentenciaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonEjecutarSentenciaActionPerformed
+        limpiarTabla(dtmTablaResultado);
+        try {
+            String sentencia = jTextAreaSentencia.getText();
+            sentencia = sentencia.substring(0, sentencia.length() - 1);
+            dtmTablaResultado.setColumnIdentifiers(cdt.obtenerCabeceraParaTablaFinal(sentencia).toArray());
+            ResultSet rs = cdt.obtenerContenidoParaTablaFinal(sentencia);
+            while (rs.next()) {
+                ArrayList<Object> contenidoRow = new ArrayList<>();
+                for (int i = 1; i <= jTableTablaResultado.getColumnCount(); i++) {
+                    contenidoRow.add(rs.getObject(i));
+                }
+                dtmTablaResultado.addRow(contenidoRow.toArray());
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(PrincipalJFrame.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }//GEN-LAST:event_jButtonEjecutarSentenciaActionPerformed
 
     public static void main(String args[]) {
         try {
