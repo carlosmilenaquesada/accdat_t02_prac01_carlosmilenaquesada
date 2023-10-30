@@ -26,9 +26,9 @@ import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
-import java.text.SimpleDateFormat;
 
 import javax.swing.JFileChooser;
+import javax.swing.JTextField;
 
 import javax.swing.filechooser.FileNameExtensionFilter;
 
@@ -113,6 +113,7 @@ public class PrincipalJFrame extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        buttonGroupOpcionesLike = new javax.swing.ButtonGroup();
         jPanelPrincipal = new javax.swing.JPanel();
         jPanelSeleccionTabla = new javax.swing.JPanel();
         jLabelTablas = new javax.swing.JLabel();
@@ -136,6 +137,10 @@ public class PrincipalJFrame extends javax.swing.JFrame {
             }
         };
         jPanelCreacionCondicionales = new javax.swing.JPanel();
+        jPanelValorOpcionesLike = new javax.swing.JPanel();
+        jRadioButtonEmpiece = new javax.swing.JRadioButton();
+        jRadioButtonTermine = new javax.swing.JRadioButton();
+        jRadioButtonContenga = new javax.swing.JRadioButton();
         jLabelCampo = new javax.swing.JLabel();
         jComboBoxCampos = new javax.swing.JComboBox<>();
         jPanelValor1 = new javax.swing.JPanel();
@@ -146,6 +151,7 @@ public class PrincipalJFrame extends javax.swing.JFrame {
         jSpinnerInicio = new javax.swing.JSpinner();
         jLabelOperador = new javax.swing.JLabel();
         jComboBoxOperadorLogico = new javax.swing.JComboBox<>();
+        jLabelTipDato = new javax.swing.JLabel();
         jPanelValor2 = new javax.swing.JPanel();
         jLabelValor2 = new javax.swing.JLabel();
         jTextFieldValor2 = new javax.swing.JTextField();
@@ -185,7 +191,7 @@ public class PrincipalJFrame extends javax.swing.JFrame {
         jLabelTablas.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
         jLabelTablas.setText("Tabla");
         jPanelSeleccionTabla.add(jLabelTablas);
-        jLabelTablas.setBounds(10, 37, 70, 25);
+        jLabelTablas.setBounds(10, 37, 50, 25);
 
         jComboBoxTablas.addItemListener(new java.awt.event.ItemListener() {
             public void itemStateChanged(java.awt.event.ItemEvent evt) {
@@ -193,7 +199,7 @@ public class PrincipalJFrame extends javax.swing.JFrame {
             }
         });
         jPanelSeleccionTabla.add(jComboBoxTablas);
-        jComboBoxTablas.setBounds(90, 37, 120, 25);
+        jComboBoxTablas.setBounds(70, 37, 150, 25);
 
         jScrollPaneDisponibles.setFocusable(false);
 
@@ -222,7 +228,7 @@ public class PrincipalJFrame extends javax.swing.JFrame {
         }
 
         jPanelSeleccionTabla.add(jScrollPaneDisponibles);
-        jScrollPaneDisponibles.setBounds(10, 80, 200, 210);
+        jScrollPaneDisponibles.setBounds(10, 80, 180, 210);
 
         jButtonListaTomarUno.setText(">");
         jButtonListaTomarUno.setEnabled(false);
@@ -232,7 +238,7 @@ public class PrincipalJFrame extends javax.swing.JFrame {
             }
         });
         jPanelSeleccionTabla.add(jButtonListaTomarUno);
-        jButtonListaTomarUno.setBounds(220, 110, 50, 25);
+        jButtonListaTomarUno.setBounds(200, 110, 50, 25);
 
         jButtonListaTomarTodos.setText(">>");
         jButtonListaTomarTodos.setEnabled(false);
@@ -242,7 +248,7 @@ public class PrincipalJFrame extends javax.swing.JFrame {
             }
         });
         jPanelSeleccionTabla.add(jButtonListaTomarTodos);
-        jButtonListaTomarTodos.setBounds(220, 145, 50, 25);
+        jButtonListaTomarTodos.setBounds(200, 145, 50, 25);
 
         jButtonListaQuitarUno.setText("<");
         jButtonListaQuitarUno.setEnabled(false);
@@ -252,7 +258,7 @@ public class PrincipalJFrame extends javax.swing.JFrame {
             }
         });
         jPanelSeleccionTabla.add(jButtonListaQuitarUno);
-        jButtonListaQuitarUno.setBounds(220, 180, 50, 25);
+        jButtonListaQuitarUno.setBounds(200, 180, 50, 25);
 
         jButtonListaQuitarTodos.setText("<<");
         jButtonListaQuitarTodos.setEnabled(false);
@@ -262,7 +268,7 @@ public class PrincipalJFrame extends javax.swing.JFrame {
             }
         });
         jPanelSeleccionTabla.add(jButtonListaQuitarTodos);
-        jButtonListaQuitarTodos.setBounds(220, 215, 50, 25);
+        jButtonListaQuitarTodos.setBounds(200, 215, 50, 25);
 
         jScrollPaneTomados.setDoubleBuffered(true);
         jScrollPaneTomados.setFocusable(false);
@@ -291,19 +297,57 @@ public class PrincipalJFrame extends javax.swing.JFrame {
         }
 
         jPanelSeleccionTabla.add(jScrollPaneTomados);
-        jScrollPaneTomados.setBounds(280, 80, 200, 210);
+        jScrollPaneTomados.setBounds(260, 80, 180, 210);
 
         jPanelPrincipal.add(jPanelSeleccionTabla);
-        jPanelSeleccionTabla.setBounds(10, 10, 490, 300);
+        jPanelSeleccionTabla.setBounds(10, 10, 450, 300);
 
         jPanelCreacionCondicionales.setBorder(javax.swing.BorderFactory.createTitledBorder(javax.swing.BorderFactory.createEtchedBorder(), "Crear condicional", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Tahoma", 1, 14))); // NOI18N
         jPanelCreacionCondicionales.setLayout(null);
+
+        jPanelValorOpcionesLike.setLayout(null);
+
+        buttonGroupOpcionesLike.add(jRadioButtonEmpiece);
+        jRadioButtonEmpiece.setText("empiece");
+        jRadioButtonEmpiece.setIconTextGap(3);
+        jRadioButtonEmpiece.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jRadioButtonEmpieceActionPerformed(evt);
+            }
+        });
+        jPanelValorOpcionesLike.add(jRadioButtonEmpiece);
+        jRadioButtonEmpiece.setBounds(1, 5, 80, 30);
+
+        buttonGroupOpcionesLike.add(jRadioButtonTermine);
+        jRadioButtonTermine.setText("termine");
+        jRadioButtonTermine.setIconTextGap(3);
+        jRadioButtonTermine.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jRadioButtonTermineActionPerformed(evt);
+            }
+        });
+        jPanelValorOpcionesLike.add(jRadioButtonTermine);
+        jRadioButtonTermine.setBounds(81, 5, 80, 30);
+
+        buttonGroupOpcionesLike.add(jRadioButtonContenga);
+        jRadioButtonContenga.setText("contenga");
+        jRadioButtonContenga.setIconTextGap(3);
+        jRadioButtonContenga.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jRadioButtonContengaActionPerformed(evt);
+            }
+        });
+        jPanelValorOpcionesLike.add(jRadioButtonContenga);
+        jRadioButtonContenga.setBounds(161, 5, 80, 30);
+
+        jPanelCreacionCondicionales.add(jPanelValorOpcionesLike);
+        jPanelValorOpcionesLike.setBounds(225, 80, 240, 40);
 
         jLabelCampo.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
         jLabelCampo.setText("Campo");
         jLabelCampo.setEnabled(false);
         jPanelCreacionCondicionales.add(jLabelCampo);
-        jLabelCampo.setBounds(10, 37, 55, 25);
+        jLabelCampo.setBounds(10, 48, 55, 25);
 
         jComboBoxCampos.setEnabled(false);
         jComboBoxCampos.addItemListener(new java.awt.event.ItemListener() {
@@ -312,7 +356,7 @@ public class PrincipalJFrame extends javax.swing.JFrame {
             }
         });
         jPanelCreacionCondicionales.add(jComboBoxCampos);
-        jComboBoxCampos.setBounds(75, 37, 120, 25);
+        jComboBoxCampos.setBounds(75, 48, 140, 25);
 
         jPanelValor1.setLayout(null);
 
@@ -322,23 +366,27 @@ public class PrincipalJFrame extends javax.swing.JFrame {
         jPanelValor1.add(jLabelValor1);
         jLabelValor1.setBounds(5, 5, 45, 30);
 
+        jLabelComillaIzq.setBackground(new java.awt.Color(102, 153, 0));
         jLabelComillaIzq.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         jLabelComillaIzq.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
         jLabelComillaIzq.setText("'");
         jLabelComillaIzq.setEnabled(false);
+        jLabelComillaIzq.setOpaque(true);
         jPanelValor1.add(jLabelComillaIzq);
         jLabelComillaIzq.setBounds(55, 5, 10, 30);
 
+        jLabelComillaDer.setBackground(new java.awt.Color(255, 102, 0));
         jLabelComillaDer.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         jLabelComillaDer.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
         jLabelComillaDer.setText("'");
         jLabelComillaDer.setEnabled(false);
+        jLabelComillaDer.setOpaque(true);
         jPanelValor1.add(jLabelComillaDer);
-        jLabelComillaDer.setBounds(185, 5, 10, 30);
+        jLabelComillaDer.setBounds(230, 5, 10, 30);
 
         jTextFieldValor1.setEnabled(false);
         jPanelValor1.add(jTextFieldValor1);
-        jTextFieldValor1.setBounds(55, 5, 140, 30);
+        jTextFieldValor1.setBounds(55, 5, 185, 30);
 
         jSpinnerInicio.setModel(new javax.swing.SpinnerDateModel(new java.util.Date(), null, null, java.util.Calendar.MINUTE));
         jSpinnerInicio.setEnabled(false);
@@ -346,7 +394,7 @@ public class PrincipalJFrame extends javax.swing.JFrame {
         jSpinnerInicio.setBounds(55, 5, 140, 30);
 
         jPanelCreacionCondicionales.add(jPanelValor1);
-        jPanelValor1.setBounds(210, 30, 200, 40);
+        jPanelValor1.setBounds(225, 41, 240, 40);
 
         jLabelOperador.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
         jLabelOperador.setText("Operador");
@@ -361,7 +409,9 @@ public class PrincipalJFrame extends javax.swing.JFrame {
             }
         });
         jPanelCreacionCondicionales.add(jComboBoxOperadorLogico);
-        jComboBoxOperadorLogico.setBounds(75, 87, 120, 25);
+        jComboBoxOperadorLogico.setBounds(75, 87, 140, 25);
+        jPanelCreacionCondicionales.add(jLabelTipDato);
+        jLabelTipDato.setBounds(10, 20, 220, 25);
 
         jPanelValor2.setLayout(null);
 
@@ -381,7 +431,7 @@ public class PrincipalJFrame extends javax.swing.JFrame {
         jSpinnerFin.setBounds(55, 5, 140, 30);
 
         jPanelCreacionCondicionales.add(jPanelValor2);
-        jPanelValor2.setBounds(210, 80, 200, 40);
+        jPanelValor2.setBounds(225, 80, 240, 40);
 
         jComboBoxOperadorRelacional.setEnabled(false);
         jPanelCreacionCondicionales.add(jComboBoxOperadorRelacional);
@@ -395,7 +445,7 @@ public class PrincipalJFrame extends javax.swing.JFrame {
             }
         });
         jPanelCreacionCondicionales.add(jButtonAgregarCondicion);
-        jButtonAgregarCondicion.setBounds(360, 130, 50, 25);
+        jButtonAgregarCondicion.setBounds(415, 130, 50, 25);
 
         jScrollPaneCondiciones.setFocusable(false);
 
@@ -424,7 +474,7 @@ public class PrincipalJFrame extends javax.swing.JFrame {
         }
 
         jPanelCreacionCondicionales.add(jScrollPaneCondiciones);
-        jScrollPaneCondiciones.setBounds(10, 165, 345, 125);
+        jScrollPaneCondiciones.setBounds(10, 165, 395, 125);
 
         jButtonQuitarCondicion.setText("-");
         jButtonQuitarCondicion.setEnabled(false);
@@ -434,10 +484,10 @@ public class PrincipalJFrame extends javax.swing.JFrame {
             }
         });
         jPanelCreacionCondicionales.add(jButtonQuitarCondicion);
-        jButtonQuitarCondicion.setBounds(360, 190, 50, 25);
+        jButtonQuitarCondicion.setBounds(415, 190, 50, 25);
 
         jPanelPrincipal.add(jPanelCreacionCondicionales);
-        jPanelCreacionCondicionales.setBounds(510, 10, 420, 300);
+        jPanelCreacionCondicionales.setBounds(470, 10, 480, 300);
 
         jPanelSentenciaSql.setBorder(javax.swing.BorderFactory.createTitledBorder(javax.swing.BorderFactory.createEtchedBorder(), "Sentencia SQL generada", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Tahoma", 1, 14))); // NOI18N
         jPanelSentenciaSql.setLayout(null);
@@ -465,7 +515,7 @@ public class PrincipalJFrame extends javax.swing.JFrame {
         jButtonEjecutarSentencia.setBounds(820, 60, 90, 25);
 
         jPanelPrincipal.add(jPanelSentenciaSql);
-        jPanelSentenciaSql.setBounds(10, 320, 920, 135);
+        jPanelSentenciaSql.setBounds(10, 320, 940, 135);
 
         jPanelTablaExportacion.setBorder(javax.swing.BorderFactory.createTitledBorder(javax.swing.BorderFactory.createEtchedBorder(), "Resultado de la consulta", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Tahoma", 1, 14))); // NOI18N
         jPanelTablaExportacion.setLayout(null);
@@ -512,14 +562,14 @@ public class PrincipalJFrame extends javax.swing.JFrame {
         jButtonExportar.setBounds(820, 105, 90, 25);
 
         jPanelPrincipal.add(jPanelTablaExportacion);
-        jPanelTablaExportacion.setBounds(10, 465, 920, 225);
+        jPanelTablaExportacion.setBounds(10, 465, 940, 225);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addComponent(jPanelPrincipal, javax.swing.GroupLayout.PREFERRED_SIZE, 940, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(jPanelPrincipal, javax.swing.GroupLayout.PREFERRED_SIZE, 960, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(0, 0, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
@@ -569,7 +619,7 @@ public class PrincipalJFrame extends javax.swing.JFrame {
         dcbmOperadorRelacional.removeAllElements();
         jTextFieldValor1.setText("");
         jTextFieldValor2.setText("");
-
+        jLabelTipDato.setText("");
         jTextAreaSentencia.setText("");
         Defectos.tipoDeCondicional = TipoDeCondicional.NO_ASIGNADO;
     }
@@ -581,7 +631,7 @@ public class PrincipalJFrame extends javax.swing.JFrame {
             case TIPO_COMPARACION:
                 if (((Columna) dcbmCampos.getSelectedItem()).getType().equals("DATE")) {
                     if (!jSpinnerInicio.getValue().toString().isEmpty()) {
-                        condicional += " TO_DATE('" + Defectos.sdf.format(jSpinnerInicio.getValue()) + "', 'DD-MM-YYYY HH24:MI:SS')";
+                        condicional += " TO_DATE('" + Defectos.SDF.format(jSpinnerInicio.getValue()) + "', '" + Defectos.FORMATO_FECHA_SQL + "')";
                     } else {
                         condicional = "";
                     }
@@ -597,15 +647,15 @@ public class PrincipalJFrame extends javax.swing.JFrame {
             case TIPO_BETWEEN:
                 if (((Columna) dcbmCampos.getSelectedItem()).getType().equals("NUMBER")) {
                     if (!jTextFieldValor1.getText().isEmpty() && !jTextFieldValor2.getText().isEmpty()) {
-                        condicional += " " + jTextFieldValor1.getText() + " " + jTextFieldValor2.getText();
+                        condicional += " " + jTextFieldValor1.getText() + " AND " + jTextFieldValor2.getText();
                     } else {
                         condicional = "";
                     }
                 } else {
                     if (!jSpinnerInicio.getValue().toString().isEmpty() && !jSpinnerFin.getValue().toString().isEmpty()) {
 
-                        condicional += " TO_DATE('" + Defectos.sdf.format(jSpinnerInicio.getValue()) + "', 'DD-MM-YYYY HH24:MI:SS') AND "
-                                + " TO_DATE('" + Defectos.sdf.format(jSpinnerFin.getValue()) + "', 'DD-MM-YYYY HH24:MI:SS')";
+                        condicional += " TO_DATE('" + Defectos.SDF.format(jSpinnerInicio.getValue()) + "', '" + Defectos.FORMATO_FECHA_SQL + "') AND "
+                                + " TO_DATE('" + Defectos.SDF.format(jSpinnerFin.getValue()) + "', '" + Defectos.FORMATO_FECHA_SQL + "')";
                     } else {
                         condicional = "";
                     }
@@ -614,7 +664,6 @@ public class PrincipalJFrame extends javax.swing.JFrame {
             case NO_ASIGNADO:
                 break;
         }
-
         return condicional;
     }
 
@@ -644,13 +693,11 @@ public class PrincipalJFrame extends javax.swing.JFrame {
 
     //private void 
     private void comillasVisibles(boolean aFlag) {
+        jLabelComillaIzq.setVisible(aFlag);
+        jLabelComillaDer.setVisible(aFlag);
         if (aFlag) {
-            jLabelComillaIzq.setVisible(true);
-            jLabelComillaDer.setVisible(true);
             jTextFieldValor1.setMargin(new Insets(2, 10, 2, 10));
         } else {
-            jLabelComillaIzq.setVisible(false);
-            jLabelComillaDer.setVisible(false);
             jTextFieldValor1.setMargin(new Insets(2, 2, 2, 2));
         }
     }
@@ -715,6 +762,7 @@ public class PrincipalJFrame extends javax.swing.JFrame {
     private void jComboBoxCamposItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_jComboBoxCamposItemStateChanged
         if (evt.getStateChange() == ItemEvent.SELECTED) {
             String tipoDatoSql = ((Columna) dcbmCampos.getSelectedItem()).getType();
+            jLabelTipDato.setText("Tipo de dato del campo: " + tipoDatoSql);
             dcbmOperadorLogico.removeAllElements();
 
             /*jLabelValor1.setVisible(true);
@@ -722,14 +770,18 @@ public class PrincipalJFrame extends javax.swing.JFrame {
             jSpinnerInicio.setVisible(true);
             jSpinnerFin.setVisible(true);*/
             comillasVisibles(false);
+            jSpinnerInicio.setVisible(false);
+            jSpinnerFin.setVisible(false);
+            jTextFieldValor1.setVisible(true);
+            jTextFieldValor2.setVisible(true);
             switch (tipoDatoSql) {
                 case "NUMBER":
                     dcbmOperadorLogico.addAll(Defectos.OP_LOGICO_NUMBER_Y_DATE);
 
                     //jLabelValor1.setVisible(true);
-                    jTextFieldValor1.setVisible(true);
+                    //jTextFieldValor1.setVisible(true);
                     //jLabelValor2.setVisible(true);
-                    jTextFieldValor2.setVisible(true);
+                    //jTextFieldValor2.setVisible(true);
                     //jSpinnerInicio.setVisible(false);
                     //jSpinnerFin.setVisible(false);
                     //comillasVisibles(false);
@@ -740,16 +792,16 @@ public class PrincipalJFrame extends javax.swing.JFrame {
                     jTextFieldValor1.setVisible(false);
                     //jLabelValor2.setVisible(true);
                     jTextFieldValor2.setVisible(false);
-                    //jSpinnerInicio.setVisible(true);
-                    //jSpinnerFin.setVisible(true);
+                    jSpinnerInicio.setVisible(true);
+                    jSpinnerFin.setVisible(true);
                     //comillasVisibles(false);
                     break;
                 case "VARCHAR2":
                     dcbmOperadorLogico.addAll(Defectos.OP_LOGICO_VARCHAR2);
                     //jLabelValor1.setVisible(true);
-                    jTextFieldValor1.setVisible(true);
+                    //jTextFieldValor1.setVisible(true);
                     //jLabelValor2.setVisible(false);
-                    jTextFieldValor2.setVisible(false);
+                    //jTextFieldValor2.setVisible(false);
                     //jSpinnerInicio.setVisible(false);
                     //jSpinnerFin.setVisible(false);
                     comillasVisibles(true);
@@ -845,6 +897,30 @@ public class PrincipalJFrame extends javax.swing.JFrame {
             }
         }
     }//GEN-LAST:event_jButtonExportarActionPerformed
+
+    private void jRadioButtonEmpieceActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jRadioButtonEmpieceActionPerformed
+        jLabelComillaDer.setBounds(210, 5, 30, 30);
+        jLabelComillaDer.setText("%");
+        jTextFieldValor1.setMargin(new Insets(2, 2, 2, 25));
+        jTextFieldValor1.setHorizontalAlignment(JTextField.RIGHT);
+    }//GEN-LAST:event_jRadioButtonEmpieceActionPerformed
+
+    private void jRadioButtonTermineActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jRadioButtonTermineActionPerformed
+        jLabelComillaIzq.setSize(30, 30);
+        jLabelComillaIzq.setText("%");
+
+        jTextFieldValor1.setMargin(new Insets(2, 25, 2, 2));
+        jTextFieldValor1.setHorizontalAlignment(JTextField.LEFT);
+    }//GEN-LAST:event_jRadioButtonTermineActionPerformed
+
+    private void jRadioButtonContengaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jRadioButtonContengaActionPerformed
+        jLabelComillaIzq.setSize(30, 30);
+        jLabelComillaDer.setBounds(210, 5, 30, 30);
+        jLabelComillaIzq.setText("%");
+        jLabelComillaDer.setText("%");
+        jTextFieldValor1.setMargin(new Insets(2, 25, 2, 25));
+        jTextFieldValor1.setHorizontalAlignment(JTextField.CENTER);
+    }//GEN-LAST:event_jRadioButtonContengaActionPerformed
     private TablaDinamica generarObjetoTablaDinamica(ArrayList<Columna> cabeceraTabla, JTable contenidoTabla) {
 
         TablaDinamica td = new TablaDinamica();
@@ -968,6 +1044,7 @@ public class PrincipalJFrame extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.ButtonGroup buttonGroupOpcionesLike;
     private javax.swing.JButton jButtonAgregarCondicion;
     private javax.swing.JButton jButtonEjecutarSentencia;
     private javax.swing.JButton jButtonExportar;
@@ -985,6 +1062,7 @@ public class PrincipalJFrame extends javax.swing.JFrame {
     private javax.swing.JLabel jLabelComillaIzq;
     private javax.swing.JLabel jLabelOperador;
     private javax.swing.JLabel jLabelTablas;
+    private javax.swing.JLabel jLabelTipDato;
     private javax.swing.JLabel jLabelValor1;
     private javax.swing.JLabel jLabelValor2;
     private javax.swing.JPanel jPanelCreacionCondicionales;
@@ -994,6 +1072,10 @@ public class PrincipalJFrame extends javax.swing.JFrame {
     private javax.swing.JPanel jPanelTablaExportacion;
     private javax.swing.JPanel jPanelValor1;
     private javax.swing.JPanel jPanelValor2;
+    private javax.swing.JPanel jPanelValorOpcionesLike;
+    private javax.swing.JRadioButton jRadioButtonContenga;
+    private javax.swing.JRadioButton jRadioButtonEmpiece;
+    private javax.swing.JRadioButton jRadioButtonTermine;
     private javax.swing.JScrollPane jScrollPaneCondiciones;
     private javax.swing.JScrollPane jScrollPaneDisponibles;
     private javax.swing.JScrollPane jScrollPaneSentencia;

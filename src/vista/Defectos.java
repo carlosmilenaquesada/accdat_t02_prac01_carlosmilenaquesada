@@ -26,6 +26,8 @@ public abstract class Defectos {
 
     public static TipoDeCondicional tipoDeCondicional = TipoDeCondicional.NO_ASIGNADO; 
     
-    public static final SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
+    public static final SimpleDateFormat SDF = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
+    
+    public static final String FORMATO_FECHA_SQL = "DD-MM-YYYY HH24:MI:SS";
 }
 
