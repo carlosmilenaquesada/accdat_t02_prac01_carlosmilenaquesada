@@ -19,6 +19,7 @@ public class ConsultasDeEsquema {
             try {
                 //COMPROBAR SI BORRRO UNA TABLA POR EUJEMPLO, LOS METADATOS SE MODIFICAN O SI UNA VEZ TOMADOS SE MANTIENEN
                 dbmd = Conexion.getInstance().getMetaData();
+               
             } catch (SQLException ex) {
 
             }

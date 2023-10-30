@@ -1,6 +1,7 @@
 package vista;
 
 import java.awt.Color;
+import java.text.SimpleDateFormat;
 
 import java.util.List;
 
@@ -24,5 +25,7 @@ public abstract class Defectos {
     public static final List<String> OP_RELACIONAL = List.of("AND", "OR");
 
     public static TipoDeCondicional tipoDeCondicional = TipoDeCondicional.NO_ASIGNADO; 
+    
+    public static final SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
 }
 
