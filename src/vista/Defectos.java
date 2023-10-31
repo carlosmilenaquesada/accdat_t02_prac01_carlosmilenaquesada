@@ -9,6 +9,10 @@ public abstract class Defectos {
     public enum TipoDeCondicional{
         NO_ASIGNADO, TIPO_COMPARACION, TIPO_LIKE, TIPO_NULL, TIPO_BETWEEN
     }
+    
+    public enum RBTipoDeLike{
+        NO_ASIGNADO, EMPIECE, TERMINE, CONTENGA
+    }
 
     public static final String CONEXION_CATALOGO = null;
     public static String CONEXION_ESQUEMA;
@@ -24,7 +28,7 @@ public abstract class Defectos {
 
     public static final List<String> OP_RELACIONAL = List.of("AND", "OR");
 
-    public static TipoDeCondicional tipoDeCondicional = TipoDeCondicional.NO_ASIGNADO; 
+   
     
     public static final SimpleDateFormat SDF = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
     

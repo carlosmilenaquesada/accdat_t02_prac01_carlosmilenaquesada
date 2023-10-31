@@ -42,6 +42,7 @@ import javax.swing.text.DocumentFilter;
 import javax.swing.text.PlainDocument;
 
 import modelo.TablaDinamica;
+import vista.Defectos.RBTipoDeLike;
 
 public class PrincipalJFrame extends javax.swing.JFrame {
 
@@ -67,6 +68,8 @@ public class PrincipalJFrame extends javax.swing.JFrame {
     boolean layoutCargado = false;
 
     String tipoDatoSql;
+    TipoDeCondicional tipoDeCondicional;
+    RBTipoDeLike rbtdl;
 
     public PrincipalJFrame() {
 
@@ -106,52 +109,78 @@ public class PrincipalJFrame extends javax.swing.JFrame {
             JOptionPane.showMessageDialog(null, "El usuario/esquema proporcionado"
                     + " existe, pero no tiene tablas registradas.");
         }
-
+        tipoDeCondicional = TipoDeCondicional.NO_ASIGNADO;
+        rbtdl = RBTipoDeLike.NO_ASIGNADO;
         cabecerasTablaFinal = new ArrayList<>();
         tipoDatoSql = "";
 
         AbstractDocument document = (AbstractDocument) jTextFieldValor1.getDocument();
-
-        document.setDocumentFilter(new DocumentFilter() {
+        DocumentFilter df = new DocumentFilter() {
             @Override
-            public void insertString(FilterBypass fb, int offset, String string, AttributeSet attr) throws BadLocationException {
-
+            public void insertString(DocumentFilter.FilterBypass fb, int offset, String string, AttributeSet attr) throws BadLocationException {
             }
 
             @Override
             public void remove(DocumentFilter.FilterBypass fb, int offset, int length) throws BadLocationException {
+                if (tipoDatoSql.equals("VARCHAR2")) {
+                    if (jTextFieldValor1.getText().length() > 2) {
+                        if (offset == 0) {
+                            offset++;
+                            if (jTextFieldValor1.getText().length() == length) {
 
-                if (jTextFieldValor1.getText().length() > 2) {
-                    if (offset == 0) {
-                        offset++;
-                        if (jTextFieldValor1.getText().length() == length) {
-                            System.out.println("igual");
-                            length = length - 2;
-                        } else {
-                            if (length > 1) {
-                                length--;
+                                length = length - 2;
+                            } else {
+                                if (length > 1) {
+                                    length--;
+                                }
                             }
                         }
-
+                        if (offset == jTextFieldValor1.getText().length() - 1) {
+                            offset--;
+                        }
+                        super.remove(fb, offset, length);
                     }
-                    if (offset == jTextFieldValor1.getText().length() - 1) {
-
-                        offset--;
-                    }
-                    super.remove(fb, offset, length);
                 }
+                super.remove(fb, offset, length);
             }
 
             @Override
-            public void replace(FilterBypass fb, int offset, int length, String text, AttributeSet attrs) throws BadLocationException {
-                String aux = jTextFieldValor1.getText();
-                aux = aux.substring(0, offset) + text + aux.substring(offset, aux.length());
-                aux = aux.replace("'", "");
-                aux = "'" + aux + "'";
-                System.out.println(aux);
-                super.replace(fb, 0, jTextFieldValor1.getText().length(), aux, attrs);
+            public void replace(DocumentFilter.FilterBypass fb, int offset, int length, String text, AttributeSet attrs) throws BadLocationException {
+                if (tipoDatoSql.equals("VARCHAR2")) {
+                    String aux = jTextFieldValor1.getText();
+                    if (tipoDeCondicional == TipoDeCondicional.TIPO_COMPARACION || tipoDeCondicional == TipoDeCondicional.TIPO_LIKE) {
+                        aux = aux.substring(0, offset) + text + aux.substring(offset, aux.length());
+                        aux = aux.replace("'", "");
+                        if (tipoDeCondicional == TipoDeCondicional.TIPO_LIKE) {
+                            switch (rbtdl) {
+                                case EMPIECE:
+                                    aux = aux.replace("%", "");
+                                    aux = "%" + aux;
+                                    break;
+                                case TERMINE:
+                                    aux = aux.replace("%", "");
+                                    aux = aux + "%";
+                                    break;
+                                case CONTENGA:
+                                    aux = aux.replace("%", "");
+                                    aux = "%" + aux + "%";
+                                    break;
+                                case NO_ASIGNADO:
+                                    break;
+                            }
+                        }
+                        aux = "'" + aux + "'";
+
+                    }
+                    super.replace(fb, 0, jTextFieldValor1.getText().length(), aux, attrs);
+                } else {
+                    super.replace(fb, offset, length, text, attrs);
+                }
+
             }
-        });
+
+        };
+        document.setDocumentFilter(df);
         /*
         jTextFieldValor1.setDocument(new PlainDocument() {
             @Override
@@ -226,6 +255,10 @@ public class PrincipalJFrame extends javax.swing.JFrame {
             }
         };
         jPanelCreacionCondicionales = new javax.swing.JPanel();
+        jPanelValor2 = new javax.swing.JPanel();
+        jLabelValor2 = new javax.swing.JLabel();
+        jTextFieldValor2 = new javax.swing.JTextField();
+        jSpinnerFin = new javax.swing.JSpinner();
         jPanelValorOpcionesLike = new javax.swing.JPanel();
         jRadioButtonEmpiece = new javax.swing.JRadioButton();
         jRadioButtonTermine = new javax.swing.JRadioButton();
@@ -239,10 +272,6 @@ public class PrincipalJFrame extends javax.swing.JFrame {
         jLabelOperador = new javax.swing.JLabel();
         jComboBoxOperadorLogico = new javax.swing.JComboBox<>();
         jLabelTipDato = new javax.swing.JLabel();
-        jPanelValor2 = new javax.swing.JPanel();
-        jLabelValor2 = new javax.swing.JLabel();
-        jTextFieldValor2 = new javax.swing.JTextField();
-        jSpinnerFin = new javax.swing.JSpinner();
         jComboBoxOperadorRelacional = new javax.swing.JComboBox<>();
         jButtonAgregarCondicion = new javax.swing.JButton();
         jScrollPaneCondiciones = new javax.swing.JScrollPane();
@@ -392,13 +421,34 @@ public class PrincipalJFrame extends javax.swing.JFrame {
         jPanelCreacionCondicionales.setBorder(javax.swing.BorderFactory.createTitledBorder(javax.swing.BorderFactory.createEtchedBorder(), "Crear condicional", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Tahoma", 1, 14))); // NOI18N
         jPanelCreacionCondicionales.setLayout(null);
 
+        jPanelValor2.setLayout(null);
+
+        jLabelValor2.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+        jLabelValor2.setText("Valor 2");
+        jLabelValor2.setEnabled(false);
+        jPanelValor2.add(jLabelValor2);
+        jLabelValor2.setBounds(5, 5, 45, 30);
+
+        jTextFieldValor2.setEnabled(false);
+        jPanelValor2.add(jTextFieldValor2);
+        jTextFieldValor2.setBounds(55, 5, 185, 30);
+
+        jSpinnerFin.setModel(new javax.swing.SpinnerDateModel(new java.util.Date(), null, null, java.util.Calendar.MINUTE));
+        jSpinnerFin.setEnabled(false);
+        jPanelValor2.add(jSpinnerFin);
+        jSpinnerFin.setBounds(55, 5, 185, 30);
+
+        jPanelCreacionCondicionales.add(jPanelValor2);
+        jPanelValor2.setBounds(225, 80, 240, 40);
+
         jPanelValorOpcionesLike.setLayout(null);
 
         buttonGroupOpcionesLike.add(jRadioButtonEmpiece);
         jRadioButtonEmpiece.setText("empiece");
-        jRadioButtonEmpiece.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jRadioButtonEmpieceActionPerformed(evt);
+        jRadioButtonEmpiece.setEnabled(false);
+        jRadioButtonEmpiece.addItemListener(new java.awt.event.ItemListener() {
+            public void itemStateChanged(java.awt.event.ItemEvent evt) {
+                jRadioButtonEmpieceItemStateChanged(evt);
             }
         });
         jPanelValorOpcionesLike.add(jRadioButtonEmpiece);
@@ -406,9 +456,10 @@ public class PrincipalJFrame extends javax.swing.JFrame {
 
         buttonGroupOpcionesLike.add(jRadioButtonTermine);
         jRadioButtonTermine.setText("termine");
-        jRadioButtonTermine.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jRadioButtonTermineActionPerformed(evt);
+        jRadioButtonTermine.setEnabled(false);
+        jRadioButtonTermine.addItemListener(new java.awt.event.ItemListener() {
+            public void itemStateChanged(java.awt.event.ItemEvent evt) {
+                jRadioButtonTermineItemStateChanged(evt);
             }
         });
         jPanelValorOpcionesLike.add(jRadioButtonTermine);
@@ -416,9 +467,10 @@ public class PrincipalJFrame extends javax.swing.JFrame {
 
         buttonGroupOpcionesLike.add(jRadioButtonContenga);
         jRadioButtonContenga.setText("contenga");
-        jRadioButtonContenga.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jRadioButtonContengaActionPerformed(evt);
+        jRadioButtonContenga.setEnabled(false);
+        jRadioButtonContenga.addItemListener(new java.awt.event.ItemListener() {
+            public void itemStateChanged(java.awt.event.ItemEvent evt) {
+                jRadioButtonContengaItemStateChanged(evt);
             }
         });
         jPanelValorOpcionesLike.add(jRadioButtonContenga);
@@ -479,26 +531,6 @@ public class PrincipalJFrame extends javax.swing.JFrame {
         jComboBoxOperadorLogico.setBounds(75, 87, 140, 25);
         jPanelCreacionCondicionales.add(jLabelTipDato);
         jLabelTipDato.setBounds(10, 20, 220, 25);
-
-        jPanelValor2.setLayout(null);
-
-        jLabelValor2.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
-        jLabelValor2.setText("Valor 2");
-        jLabelValor2.setEnabled(false);
-        jPanelValor2.add(jLabelValor2);
-        jLabelValor2.setBounds(5, 5, 45, 30);
-
-        jTextFieldValor2.setEnabled(false);
-        jPanelValor2.add(jTextFieldValor2);
-        jTextFieldValor2.setBounds(55, 5, 140, 30);
-
-        jSpinnerFin.setModel(new javax.swing.SpinnerDateModel(new java.util.Date(), null, null, java.util.Calendar.MINUTE));
-        jSpinnerFin.setEnabled(false);
-        jPanelValor2.add(jSpinnerFin);
-        jSpinnerFin.setBounds(55, 5, 185, 30);
-
-        jPanelCreacionCondicionales.add(jPanelValor2);
-        jPanelValor2.setBounds(225, 80, 240, 40);
 
         jComboBoxOperadorRelacional.setEnabled(false);
         jPanelCreacionCondicionales.add(jComboBoxOperadorRelacional);
@@ -566,7 +598,6 @@ public class PrincipalJFrame extends javax.swing.JFrame {
         jTextAreaSentencia.setFont(new java.awt.Font("Consolas", 0, 14)); // NOI18N
         jTextAreaSentencia.setRows(5);
         jTextAreaSentencia.setEnabled(false);
-        jTextAreaSentencia.setFocusable(false);
         jScrollPaneSentencia.setViewportView(jTextAreaSentencia);
 
         jPanelSentenciaSql.add(jScrollPaneSentencia);
@@ -606,7 +637,6 @@ public class PrincipalJFrame extends javax.swing.JFrame {
                 return canEdit [columnIndex];
             }
         });
-        jTableTablaResultado.setFocusable(false);
         jTableTablaResultado.getTableHeader().setReorderingAllowed(false);
         jScrollPaneTablaResultado.setViewportView(jTableTablaResultado);
         if (jTableTablaResultado.getColumnModel().getColumnCount() > 0) {
@@ -689,13 +719,13 @@ public class PrincipalJFrame extends javax.swing.JFrame {
         jTextFieldValor2.setText("");
         jLabelTipDato.setText("");
         jTextAreaSentencia.setText("");
-        Defectos.tipoDeCondicional = TipoDeCondicional.NO_ASIGNADO;
+        tipoDeCondicional = TipoDeCondicional.NO_ASIGNADO;
     }
 
     private String obtenerLineaCondicional() {
         String condicional = "";
         condicional = (dcbmCampos.getSelectedItem().toString()) + " " + (String) dcbmOperadorLogico.getSelectedItem();
-        switch (Defectos.tipoDeCondicional) {
+        switch (tipoDeCondicional) {
             case TIPO_COMPARACION:
                 if (((Columna) dcbmCampos.getSelectedItem()).getType().equals("DATE")) {
                     if (!jSpinnerInicio.getValue().toString().isEmpty()) {
@@ -796,6 +826,9 @@ public class PrincipalJFrame extends javax.swing.JFrame {
                 for (Component c : jPanelValor2.getComponents()) {
                     c.setEnabled(true);
                 }
+                for (Component c : jPanelValorOpcionesLike.getComponents()) {
+                    c.setEnabled(true);
+                }
                 jScrollPaneSentencia.setEnabled(true);
                 jTextAreaSentencia.setEnabled(true);
                 jButtonEjecutarSentencia.setEnabled(true);
@@ -874,25 +907,26 @@ public class PrincipalJFrame extends javax.swing.JFrame {
     private void jComboBoxOperadorLogicoItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_jComboBoxOperadorLogicoItemStateChanged
         if (evt.getStateChange() == ItemEvent.SELECTED) {
             String tipoOperador = ((String) dcbmOperadorLogico.getSelectedItem());
-
             jPanelValor1.setVisible(true);
             jPanelValor2.setVisible(false);
-            Defectos.tipoDeCondicional = TipoDeCondicional.TIPO_COMPARACION;
+            jPanelValorOpcionesLike.setVisible(false);
+            tipoDeCondicional = TipoDeCondicional.TIPO_COMPARACION;
 
             if (tipoOperador.equals("IS NULL") || tipoOperador.equals("IS NOT NULL")) {
                 jPanelValor1.setVisible(false);
                 jPanelValor2.setVisible(false);
-                Defectos.tipoDeCondicional = TipoDeCondicional.TIPO_NULL;
+                tipoDeCondicional = TipoDeCondicional.TIPO_NULL;
             } else {
                 if (tipoOperador.equals("BETWEEN") || tipoOperador.equals("NOT BETWEEN")) {
                     jPanelValor1.setVisible(true);
                     jPanelValor2.setVisible(true);
-
-                    Defectos.tipoDeCondicional = TipoDeCondicional.TIPO_BETWEEN;
+                    tipoDeCondicional = TipoDeCondicional.TIPO_BETWEEN;
                 } else {
                     if (tipoOperador.equals("LIKE") || tipoOperador.equals("NOT LIKE")) {
-
-                        Defectos.tipoDeCondicional = TipoDeCondicional.TIPO_LIKE;
+                        jPanelValor1.setVisible(true);
+                        jPanelValorOpcionesLike.setVisible(true);
+                        tipoDeCondicional = TipoDeCondicional.TIPO_LIKE;
+                        jRadioButtonContenga.setSelected(true);
                     }
                 }
             }
@@ -955,17 +989,26 @@ public class PrincipalJFrame extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_jButtonExportarActionPerformed
 
-    private void jRadioButtonEmpieceActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jRadioButtonEmpieceActionPerformed
+    private void jRadioButtonContengaItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_jRadioButtonContengaItemStateChanged
+        if (evt.getStateChange() == ItemEvent.SELECTED) {
+            rbtdl = RBTipoDeLike.CONTENGA;
+            jTextFieldValor1.setText(jTextFieldValor1.getText());
+        }
+    }//GEN-LAST:event_jRadioButtonContengaItemStateChanged
 
-    }//GEN-LAST:event_jRadioButtonEmpieceActionPerformed
+    private void jRadioButtonTermineItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_jRadioButtonTermineItemStateChanged
+        if (evt.getStateChange() == ItemEvent.SELECTED) {
+            rbtdl = RBTipoDeLike.TERMINE;
+            jTextFieldValor1.setText(jTextFieldValor1.getText());
+        }
+    }//GEN-LAST:event_jRadioButtonTermineItemStateChanged
 
-    private void jRadioButtonTermineActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jRadioButtonTermineActionPerformed
-
-    }//GEN-LAST:event_jRadioButtonTermineActionPerformed
-
-    private void jRadioButtonContengaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jRadioButtonContengaActionPerformed
-
-    }//GEN-LAST:event_jRadioButtonContengaActionPerformed
+    private void jRadioButtonEmpieceItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_jRadioButtonEmpieceItemStateChanged
+        if (evt.getStateChange() == ItemEvent.SELECTED) {
+            rbtdl = RBTipoDeLike.EMPIECE;
+            jTextFieldValor1.setText(jTextFieldValor1.getText());
+        }
+    }//GEN-LAST:event_jRadioButtonEmpieceItemStateChanged
     private TablaDinamica generarObjetoTablaDinamica(ArrayList<Columna> cabeceraTabla, JTable contenidoTabla) {
 
         TablaDinamica td = new TablaDinamica();
