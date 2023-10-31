@@ -11,21 +11,21 @@ public class LoginJDialog extends javax.swing.JDialog {
     public LoginJDialog(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
         initComponents();
-        
+
     }
 
     public void CrearConexion() {
         String servidor = /*jTextFieldServidor.getText()*/ "localhost";
         String puerto = /*jTextFieldPuerto.getText()*/ "1521";
-        String usuario = /*jTextFieldUsuario.getText()*/ /*"TEMA_02_PRACTICA_01_AD"*/"AD_TEMA02_FICHAJES";
-        String password = /*jTextFieldPassword.getText()*/ /*"TEMA_02_PRACTICA_01_AD"*/"AD_TEMA02_FICHAJES";
+        String usuario = /*jTextFieldUsuario.getText()*/ "TEMA_02_PRACTICA_01_AD"/*"AD_TEMA02_FICHAJES"*/;
+        String password = /*jTextFieldPassword.getText()*/ "TEMA_02_PRACTICA_01_AD"/*"AD_TEMA02_FICHAJES"*/;
 
         boolean camposEscritos = true;
 
         if (servidor.isEmpty()) {
             camposEscritos = false;
             jTextFieldServidor.setBackground(Defectos.COLOR_ERROR);
-        }        
+        }
         if (puerto.isEmpty()) {
             camposEscritos = false;
             jTextFieldPuerto.setBackground(Defectos.COLOR_ERROR);

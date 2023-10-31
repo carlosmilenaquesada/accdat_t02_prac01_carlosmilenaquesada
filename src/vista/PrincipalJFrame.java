@@ -20,25 +20,33 @@ import modelo.Columna;
 import vista.Defectos.TipoDeCondicional;
 
 import com.google.gson.*;
-import java.awt.Insets;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
+import javax.swing.Action;
 
 import javax.swing.JFileChooser;
-import javax.swing.JTextField;
+import javax.swing.SwingUtilities;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 
 import javax.swing.filechooser.FileNameExtensionFilter;
+import javax.swing.text.AbstractDocument;
+import javax.swing.text.AttributeSet;
+import javax.swing.text.BadLocationException;
+import javax.swing.text.DocumentFilter;
+import javax.swing.text.PlainDocument;
 
 import modelo.TablaDinamica;
 
 public class PrincipalJFrame extends javax.swing.JFrame {
 
     //Creación de mis variables-------------------------------------------------
-    //Conexión y controladores    
-    Connection conexion = null;
+    //Controladores
     ConsultasDeEsquema cde = null;
     ConsultaDeTabla cdt = null;
     //Combo Box model
@@ -58,22 +66,16 @@ public class PrincipalJFrame extends javax.swing.JFrame {
     ArrayList<Columna> cabecerasTablaFinal = null;
     boolean layoutCargado = false;
 
+    String tipoDatoSql;
+
     public PrincipalJFrame() {
-        //Creación del JDialog del login
+
         LoginJDialog ljd = new LoginJDialog(this, true);
-        //ljd.setVisible(true);
+
         ljd.CrearConexion();
 
-        //Una vez logeados, ya tenemos una conexión válida a la base de datos,
-        //bajo el esquema que se a proporcionado en el login. Guardamos la
-        //conexión el en un objeto para poder trabajar con ella.
-        conexion = Conexion.getInstance();
-
         initComponents();
-        //A algunos componentes que he agregado al JFrame principal, les tengo
-        //que inicializar/configurar sus models y otras propiedades. Además, 
-        //tengo que configurar los valores que el programa carga por defecto a su
-        //inicio. Dichas acciones las realizo en la siguiente función.
+
         initConfiguracion();
 
     }
@@ -106,7 +108,94 @@ public class PrincipalJFrame extends javax.swing.JFrame {
         }
 
         cabecerasTablaFinal = new ArrayList<>();
-        comillasVisibles(false);
+        tipoDatoSql = "";
+
+        AbstractDocument document = (AbstractDocument) jTextFieldValor1.getDocument();
+
+        document.setDocumentFilter(new DocumentFilter() {
+            @Override
+            public void insertString(FilterBypass fb, int offset, String string, AttributeSet attr) throws BadLocationException {
+
+            }
+
+            @Override
+            public void remove(DocumentFilter.FilterBypass fb, int offset, int length) throws BadLocationException {
+
+                if (jTextFieldValor1.getText().length() > 2) {
+                    if (offset == 0) {
+                        offset++;
+                        if (jTextFieldValor1.getText().length() == length) {
+                            System.out.println("igual");
+                            length = length - 2;
+                        } else {
+                            if (length > 1) {
+                                length--;
+                            }
+                        }
+
+                    }
+                    if (offset == jTextFieldValor1.getText().length() - 1) {
+
+                        offset--;
+                    }
+                    super.remove(fb, offset, length);
+                }
+            }
+
+            @Override
+            public void replace(FilterBypass fb, int offset, int length, String text, AttributeSet attrs) throws BadLocationException {
+                String aux = jTextFieldValor1.getText();
+                aux = aux.substring(0, offset) + text + aux.substring(offset, aux.length());
+                aux = aux.replace("'", "");
+                aux = "'" + aux + "'";
+                System.out.println(aux);
+                super.replace(fb, 0, jTextFieldValor1.getText().length(), aux, attrs);
+            }
+        });
+        /*
+        jTextFieldValor1.setDocument(new PlainDocument() {
+            @Override
+            public void insertString(int offs, String str, AttributeSet a) {
+
+                String aux = jTextFieldValor1.getText();
+                jTextFieldValor1.setText("");
+
+                if (aux.length() > 0) {
+                    if (aux.startsWith("'")) {
+                        aux = aux.substring(1, aux.length());
+                        if (offs >= 1) {
+                            offs--;
+                        }
+                    }
+                    if (aux.endsWith("'")) {
+                        aux = aux.substring(0, aux.length() - 1);
+                        if (offs >= aux.length()) {
+                            offs--;
+                        }
+                    }
+                    aux = aux.substring(0, offs) + str + aux.substring(offs, aux.length());
+
+                    aux = "'" + aux + "'";
+                } else {
+                    aux = "'" + str + "'";
+                }
+                try {
+                    super.insertString(0, aux, a);
+                } catch (BadLocationException ex) {
+                    Logger.getLogger(PrincipalJFrame.class.getName()).log(Level.SEVERE, null, ex);
+                }
+                System.out.println("al");
+
+            }
+
+            @Override
+            protected void removeUpdate(AbstractDocument.DefaultDocumentEvent chng) {
+                System.out.println(chng.getType());
+
+                //System.out.println(chng.getType());
+            }
+
+        });*/
     }
 
     @SuppressWarnings("unchecked")
@@ -145,8 +234,6 @@ public class PrincipalJFrame extends javax.swing.JFrame {
         jComboBoxCampos = new javax.swing.JComboBox<>();
         jPanelValor1 = new javax.swing.JPanel();
         jLabelValor1 = new javax.swing.JLabel();
-        jLabelComillaIzq = new javax.swing.JLabel();
-        jLabelComillaDer = new javax.swing.JLabel();
         jTextFieldValor1 = new javax.swing.JTextField();
         jSpinnerInicio = new javax.swing.JSpinner();
         jLabelOperador = new javax.swing.JLabel();
@@ -309,7 +396,6 @@ public class PrincipalJFrame extends javax.swing.JFrame {
 
         buttonGroupOpcionesLike.add(jRadioButtonEmpiece);
         jRadioButtonEmpiece.setText("empiece");
-        jRadioButtonEmpiece.setIconTextGap(3);
         jRadioButtonEmpiece.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jRadioButtonEmpieceActionPerformed(evt);
@@ -320,7 +406,6 @@ public class PrincipalJFrame extends javax.swing.JFrame {
 
         buttonGroupOpcionesLike.add(jRadioButtonTermine);
         jRadioButtonTermine.setText("termine");
-        jRadioButtonTermine.setIconTextGap(3);
         jRadioButtonTermine.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jRadioButtonTermineActionPerformed(evt);
@@ -331,7 +416,6 @@ public class PrincipalJFrame extends javax.swing.JFrame {
 
         buttonGroupOpcionesLike.add(jRadioButtonContenga);
         jRadioButtonContenga.setText("contenga");
-        jRadioButtonContenga.setIconTextGap(3);
         jRadioButtonContenga.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jRadioButtonContengaActionPerformed(evt);
@@ -366,24 +450,7 @@ public class PrincipalJFrame extends javax.swing.JFrame {
         jPanelValor1.add(jLabelValor1);
         jLabelValor1.setBounds(5, 5, 45, 30);
 
-        jLabelComillaIzq.setBackground(new java.awt.Color(102, 153, 0));
-        jLabelComillaIzq.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
-        jLabelComillaIzq.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
-        jLabelComillaIzq.setText("'");
-        jLabelComillaIzq.setEnabled(false);
-        jLabelComillaIzq.setOpaque(true);
-        jPanelValor1.add(jLabelComillaIzq);
-        jLabelComillaIzq.setBounds(55, 5, 10, 30);
-
-        jLabelComillaDer.setBackground(new java.awt.Color(255, 102, 0));
-        jLabelComillaDer.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
-        jLabelComillaDer.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
-        jLabelComillaDer.setText("'");
-        jLabelComillaDer.setEnabled(false);
-        jLabelComillaDer.setOpaque(true);
-        jPanelValor1.add(jLabelComillaDer);
-        jLabelComillaDer.setBounds(230, 5, 10, 30);
-
+        jTextFieldValor1.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         jTextFieldValor1.setEnabled(false);
         jPanelValor1.add(jTextFieldValor1);
         jTextFieldValor1.setBounds(55, 5, 185, 30);
@@ -391,7 +458,7 @@ public class PrincipalJFrame extends javax.swing.JFrame {
         jSpinnerInicio.setModel(new javax.swing.SpinnerDateModel(new java.util.Date(), null, null, java.util.Calendar.MINUTE));
         jSpinnerInicio.setEnabled(false);
         jPanelValor1.add(jSpinnerInicio);
-        jSpinnerInicio.setBounds(55, 5, 140, 30);
+        jSpinnerInicio.setBounds(55, 5, 185, 30);
 
         jPanelCreacionCondicionales.add(jPanelValor1);
         jPanelValor1.setBounds(225, 41, 240, 40);
@@ -428,7 +495,7 @@ public class PrincipalJFrame extends javax.swing.JFrame {
         jSpinnerFin.setModel(new javax.swing.SpinnerDateModel(new java.util.Date(), null, null, java.util.Calendar.MINUTE));
         jSpinnerFin.setEnabled(false);
         jPanelValor2.add(jSpinnerFin);
-        jSpinnerFin.setBounds(55, 5, 140, 30);
+        jSpinnerFin.setBounds(55, 5, 185, 30);
 
         jPanelCreacionCondicionales.add(jPanelValor2);
         jPanelValor2.setBounds(225, 80, 240, 40);
@@ -496,6 +563,7 @@ public class PrincipalJFrame extends javax.swing.JFrame {
         jScrollPaneSentencia.setFocusable(false);
 
         jTextAreaSentencia.setColumns(20);
+        jTextAreaSentencia.setFont(new java.awt.Font("Consolas", 0, 14)); // NOI18N
         jTextAreaSentencia.setRows(5);
         jTextAreaSentencia.setEnabled(false);
         jTextAreaSentencia.setFocusable(false);
@@ -631,7 +699,7 @@ public class PrincipalJFrame extends javax.swing.JFrame {
             case TIPO_COMPARACION:
                 if (((Columna) dcbmCampos.getSelectedItem()).getType().equals("DATE")) {
                     if (!jSpinnerInicio.getValue().toString().isEmpty()) {
-                        condicional += " TO_DATE('" + Defectos.SDF.format(jSpinnerInicio.getValue()) + "', '" + Defectos.FORMATO_FECHA_SQL + "')";
+                        condicional += " '" + Defectos.SDF.format(jSpinnerInicio.getValue()) + "'";
                     } else {
                         condicional = "";
                     }
@@ -653,9 +721,8 @@ public class PrincipalJFrame extends javax.swing.JFrame {
                     }
                 } else {
                     if (!jSpinnerInicio.getValue().toString().isEmpty() && !jSpinnerFin.getValue().toString().isEmpty()) {
-
-                        condicional += " TO_DATE('" + Defectos.SDF.format(jSpinnerInicio.getValue()) + "', '" + Defectos.FORMATO_FECHA_SQL + "') AND "
-                                + " TO_DATE('" + Defectos.SDF.format(jSpinnerFin.getValue()) + "', '" + Defectos.FORMATO_FECHA_SQL + "')";
+                        condicional += " '" + Defectos.SDF.format(jSpinnerInicio.getValue()) + "' AND '"
+                                + Defectos.SDF.format(jSpinnerFin.getValue()) + "'";
                     } else {
                         condicional = "";
                     }
@@ -689,17 +756,6 @@ public class PrincipalJFrame extends javax.swing.JFrame {
         sb.append(";");
 
         jTextAreaSentencia.setText(sb.toString());
-    }
-
-    //private void 
-    private void comillasVisibles(boolean aFlag) {
-        jLabelComillaIzq.setVisible(aFlag);
-        jLabelComillaDer.setVisible(aFlag);
-        if (aFlag) {
-            jTextFieldValor1.setMargin(new Insets(2, 10, 2, 10));
-        } else {
-            jTextFieldValor1.setMargin(new Insets(2, 2, 2, 2));
-        }
     }
 
 
@@ -761,7 +817,7 @@ public class PrincipalJFrame extends javax.swing.JFrame {
 
     private void jComboBoxCamposItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_jComboBoxCamposItemStateChanged
         if (evt.getStateChange() == ItemEvent.SELECTED) {
-            String tipoDatoSql = ((Columna) dcbmCampos.getSelectedItem()).getType();
+            tipoDatoSql = ((Columna) dcbmCampos.getSelectedItem()).getType();
             jLabelTipDato.setText("Tipo de dato del campo: " + tipoDatoSql);
             dcbmOperadorLogico.removeAllElements();
 
@@ -769,7 +825,6 @@ public class PrincipalJFrame extends javax.swing.JFrame {
             jLabelValor2.setVisible(true);
             jSpinnerInicio.setVisible(true);
             jSpinnerFin.setVisible(true);*/
-            comillasVisibles(false);
             jSpinnerInicio.setVisible(false);
             jSpinnerFin.setVisible(false);
             jTextFieldValor1.setVisible(true);
@@ -804,7 +859,7 @@ public class PrincipalJFrame extends javax.swing.JFrame {
                     //jTextFieldValor2.setVisible(false);
                     //jSpinnerInicio.setVisible(false);
                     //jSpinnerFin.setVisible(false);
-                    comillasVisibles(true);
+
                     break;
                 default:
 
@@ -882,8 +937,10 @@ public class PrincipalJFrame extends javax.swing.JFrame {
                 dtmTablaResultado.addRow(contenidoRow.toArray());
             }
             jButtonExportar.setEnabled(true);
+
         } catch (SQLException ex) {
-            Logger.getLogger(PrincipalJFrame.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(PrincipalJFrame.class
+                    .getName()).log(Level.SEVERE, null, ex);
         }
     }//GEN-LAST:event_jButtonEjecutarSentenciaActionPerformed
 
@@ -899,27 +956,15 @@ public class PrincipalJFrame extends javax.swing.JFrame {
     }//GEN-LAST:event_jButtonExportarActionPerformed
 
     private void jRadioButtonEmpieceActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jRadioButtonEmpieceActionPerformed
-        jLabelComillaDer.setBounds(210, 5, 30, 30);
-        jLabelComillaDer.setText("%");
-        jTextFieldValor1.setMargin(new Insets(2, 2, 2, 25));
-        jTextFieldValor1.setHorizontalAlignment(JTextField.RIGHT);
+
     }//GEN-LAST:event_jRadioButtonEmpieceActionPerformed
 
     private void jRadioButtonTermineActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jRadioButtonTermineActionPerformed
-        jLabelComillaIzq.setSize(30, 30);
-        jLabelComillaIzq.setText("%");
 
-        jTextFieldValor1.setMargin(new Insets(2, 25, 2, 2));
-        jTextFieldValor1.setHorizontalAlignment(JTextField.LEFT);
     }//GEN-LAST:event_jRadioButtonTermineActionPerformed
 
     private void jRadioButtonContengaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jRadioButtonContengaActionPerformed
-        jLabelComillaIzq.setSize(30, 30);
-        jLabelComillaDer.setBounds(210, 5, 30, 30);
-        jLabelComillaIzq.setText("%");
-        jLabelComillaDer.setText("%");
-        jTextFieldValor1.setMargin(new Insets(2, 25, 2, 25));
-        jTextFieldValor1.setHorizontalAlignment(JTextField.CENTER);
+
     }//GEN-LAST:event_jRadioButtonContengaActionPerformed
     private TablaDinamica generarObjetoTablaDinamica(ArrayList<Columna> cabeceraTabla, JTable contenidoTabla) {
 
@@ -983,15 +1028,19 @@ public class PrincipalJFrame extends javax.swing.JFrame {
         try {
             fw = new FileWriter(archivoDondeGuardar);
             fw.write(json);
+
         } catch (IOException ex) {
-            Logger.getLogger(PrincipalJFrame.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(PrincipalJFrame.class
+                    .getName()).log(Level.SEVERE, null, ex);
         } finally {
             try {
                 if (fw != null) {
                     fw.close();
+
                 }
             } catch (IOException ex) {
-                Logger.getLogger(PrincipalJFrame.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(PrincipalJFrame.class
+                        .getName()).log(Level.SEVERE, null, ex);
             }
         }
     }
@@ -1003,8 +1052,10 @@ public class PrincipalJFrame extends javax.swing.JFrame {
             fos = new FileOutputStream(archivoDondeGuardar);
             oos = new ObjectOutputStream(fos);
             oos.writeObject(objetoAGuardar);
+
         } catch (IOException ex) {
-            Logger.getLogger(PrincipalJFrame.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(PrincipalJFrame.class
+                    .getName()).log(Level.SEVERE, null, ex);
         } finally {
             try {
                 if (oos != null) {
@@ -1012,9 +1063,11 @@ public class PrincipalJFrame extends javax.swing.JFrame {
                 }
                 if (fos != null) {
                     fos.close();
+
                 }
             } catch (IOException ex) {
-                Logger.getLogger(PrincipalJFrame.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(PrincipalJFrame.class
+                        .getName()).log(Level.SEVERE, null, ex);
             }
         }
     }
@@ -1025,16 +1078,24 @@ public class PrincipalJFrame extends javax.swing.JFrame {
                 if ("Nimbus".equals(info.getName())) {
                     javax.swing.UIManager.setLookAndFeel(info.getClassName());
                     break;
+
                 }
             }
         } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(PrincipalJFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(PrincipalJFrame.class
+                    .getName()).log(java.util.logging.Level.SEVERE, null, ex);
+
         } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(PrincipalJFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(PrincipalJFrame.class
+                    .getName()).log(java.util.logging.Level.SEVERE, null, ex);
+
         } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(PrincipalJFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(PrincipalJFrame.class
+                    .getName()).log(java.util.logging.Level.SEVERE, null, ex);
+
         } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(PrincipalJFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(PrincipalJFrame.class
+                    .getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
@@ -1058,8 +1119,6 @@ public class PrincipalJFrame extends javax.swing.JFrame {
     private javax.swing.JComboBox<String> jComboBoxOperadorRelacional;
     private javax.swing.JComboBox<String> jComboBoxTablas;
     private javax.swing.JLabel jLabelCampo;
-    private javax.swing.JLabel jLabelComillaDer;
-    private javax.swing.JLabel jLabelComillaIzq;
     private javax.swing.JLabel jLabelOperador;
     private javax.swing.JLabel jLabelTablas;
     private javax.swing.JLabel jLabelTipDato;
