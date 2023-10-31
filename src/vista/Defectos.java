@@ -10,9 +10,14 @@ public abstract class Defectos {
         NO_ASIGNADO, TIPO_COMPARACION, TIPO_LIKE, TIPO_NULL, TIPO_BETWEEN
     }
     
+    public enum TipoDeDato{
+        NO_ASIGNADO, VARCHAR2, NUMBER, DATE
+    }
+    
     public enum RBTipoDeLike{
         NO_ASIGNADO, EMPIECE, TERMINE, CONTENGA
     }
+    
 
     public static final String CONEXION_CATALOGO = null;
     public static String CONEXION_ESQUEMA;

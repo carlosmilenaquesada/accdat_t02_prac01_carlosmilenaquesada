@@ -1,7 +1,6 @@
 package vista;
 
 import java.sql.*;
-import controlador.Conexion;
 import controlador.ConsultasDeEsquema;
 import controlador.ConsultaDeTabla;
 import java.awt.Component;
@@ -20,26 +19,15 @@ import modelo.Columna;
 import vista.Defectos.TipoDeCondicional;
 
 import com.google.gson.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
-import javax.swing.Action;
 
 import javax.swing.JFileChooser;
-import javax.swing.SwingUtilities;
-import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
 
 import javax.swing.filechooser.FileNameExtensionFilter;
-import javax.swing.text.AbstractDocument;
-import javax.swing.text.AttributeSet;
-import javax.swing.text.BadLocationException;
-import javax.swing.text.DocumentFilter;
-import javax.swing.text.PlainDocument;
 
 import modelo.TablaDinamica;
 import vista.Defectos.RBTipoDeLike;
@@ -114,117 +102,6 @@ public class PrincipalJFrame extends javax.swing.JFrame {
         cabecerasTablaFinal = new ArrayList<>();
         tipoDatoSql = "";
 
-        AbstractDocument document = (AbstractDocument) jTextFieldValor1.getDocument();
-        DocumentFilter df = new DocumentFilter() {
-            @Override
-            public void insertString(DocumentFilter.FilterBypass fb, int offset, String string, AttributeSet attr) throws BadLocationException {
-            }
-
-            @Override
-            public void remove(DocumentFilter.FilterBypass fb, int offset, int length) throws BadLocationException {
-                if (tipoDatoSql.equals("VARCHAR2")) {
-                    if (jTextFieldValor1.getText().length() > 2) {
-                        if (offset == 0) {
-                            offset++;
-                            if (jTextFieldValor1.getText().length() == length) {
-
-                                length = length - 2;
-                            } else {
-                                if (length > 1) {
-                                    length--;
-                                }
-                            }
-                        }
-                        if (offset == jTextFieldValor1.getText().length() - 1) {
-                            offset--;
-                        }
-                        super.remove(fb, offset, length);
-                    }
-                }
-                super.remove(fb, offset, length);
-            }
-
-            @Override
-            public void replace(DocumentFilter.FilterBypass fb, int offset, int length, String text, AttributeSet attrs) throws BadLocationException {
-                if (tipoDatoSql.equals("VARCHAR2")) {
-                    String aux = jTextFieldValor1.getText();
-                    if (tipoDeCondicional == TipoDeCondicional.TIPO_COMPARACION || tipoDeCondicional == TipoDeCondicional.TIPO_LIKE) {
-                        aux = aux.substring(0, offset) + text + aux.substring(offset, aux.length());
-                        aux = aux.replace("'", "");
-                        if (tipoDeCondicional == TipoDeCondicional.TIPO_LIKE) {
-                            switch (rbtdl) {
-                                case EMPIECE:
-                                    aux = aux.replace("%", "");
-                                    aux = "%" + aux;
-                                    break;
-                                case TERMINE:
-                                    aux = aux.replace("%", "");
-                                    aux = aux + "%";
-                                    break;
-                                case CONTENGA:
-                                    aux = aux.replace("%", "");
-                                    aux = "%" + aux + "%";
-                                    break;
-                                case NO_ASIGNADO:
-                                    break;
-                            }
-                        }
-                        aux = "'" + aux + "'";
-
-                    }
-                    super.replace(fb, 0, jTextFieldValor1.getText().length(), aux, attrs);
-                } else {
-                    super.replace(fb, offset, length, text, attrs);
-                }
-
-            }
-
-        };
-        document.setDocumentFilter(df);
-        /*
-        jTextFieldValor1.setDocument(new PlainDocument() {
-            @Override
-            public void insertString(int offs, String str, AttributeSet a) {
-
-                String aux = jTextFieldValor1.getText();
-                jTextFieldValor1.setText("");
-
-                if (aux.length() > 0) {
-                    if (aux.startsWith("'")) {
-                        aux = aux.substring(1, aux.length());
-                        if (offs >= 1) {
-                            offs--;
-                        }
-                    }
-                    if (aux.endsWith("'")) {
-                        aux = aux.substring(0, aux.length() - 1);
-                        if (offs >= aux.length()) {
-                            offs--;
-                        }
-                    }
-                    aux = aux.substring(0, offs) + str + aux.substring(offs, aux.length());
-
-                    aux = "'" + aux + "'";
-                } else {
-                    aux = "'" + str + "'";
-                }
-                try {
-                    super.insertString(0, aux, a);
-                } catch (BadLocationException ex) {
-                    Logger.getLogger(PrincipalJFrame.class.getName()).log(Level.SEVERE, null, ex);
-                }
-                System.out.println("al");
-
-            }
-
-            @Override
-            protected void removeUpdate(AbstractDocument.DefaultDocumentEvent chng) {
-                System.out.println(chng.getType());
-
-                //System.out.println(chng.getType());
-            }
-
-        });*/
     }
 
     @SuppressWarnings("unchecked")
@@ -255,20 +132,22 @@ public class PrincipalJFrame extends javax.swing.JFrame {
             }
         };
         jPanelCreacionCondicionales = new javax.swing.JPanel();
+        jPanelValor1 = new javax.swing.JPanel();
+        jLabelValor1 = new javax.swing.JLabel();
+        jTextFieldValorTexto1 = new javax.swing.JTextField();
+        jTextFieldValorNumero1 = new javax.swing.JTextField();
+        jSpinnerInicio = new javax.swing.JSpinner();
         jPanelValor2 = new javax.swing.JPanel();
         jLabelValor2 = new javax.swing.JLabel();
-        jTextFieldValor2 = new javax.swing.JTextField();
+        jTextFieldValorTexto2 = new javax.swing.JTextField();
         jSpinnerFin = new javax.swing.JSpinner();
+        jTextFieldValorNumero2 = new javax.swing.JTextField();
         jPanelValorOpcionesLike = new javax.swing.JPanel();
         jRadioButtonEmpiece = new javax.swing.JRadioButton();
         jRadioButtonTermine = new javax.swing.JRadioButton();
         jRadioButtonContenga = new javax.swing.JRadioButton();
         jLabelCampo = new javax.swing.JLabel();
         jComboBoxCampos = new javax.swing.JComboBox<>();
-        jPanelValor1 = new javax.swing.JPanel();
-        jLabelValor1 = new javax.swing.JLabel();
-        jTextFieldValor1 = new javax.swing.JTextField();
-        jSpinnerInicio = new javax.swing.JSpinner();
         jLabelOperador = new javax.swing.JLabel();
         jComboBoxOperadorLogico = new javax.swing.JComboBox<>();
         jLabelTipDato = new javax.swing.JLabel();
@@ -421,6 +300,32 @@ public class PrincipalJFrame extends javax.swing.JFrame {
         jPanelCreacionCondicionales.setBorder(javax.swing.BorderFactory.createTitledBorder(javax.swing.BorderFactory.createEtchedBorder(), "Crear condicional", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Tahoma", 1, 14))); // NOI18N
         jPanelCreacionCondicionales.setLayout(null);
 
+        jPanelValor1.setLayout(null);
+
+        jLabelValor1.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+        jLabelValor1.setText("Valor 1");
+        jLabelValor1.setEnabled(false);
+        jPanelValor1.add(jLabelValor1);
+        jLabelValor1.setBounds(5, 5, 45, 30);
+
+        jTextFieldValorTexto1.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        jTextFieldValorTexto1.setEnabled(false);
+        jPanelValor1.add(jTextFieldValorTexto1);
+        jTextFieldValorTexto1.setBounds(55, 5, 185, 30);
+
+        jTextFieldValorNumero1.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        jTextFieldValorNumero1.setEnabled(false);
+        jPanelValor1.add(jTextFieldValorNumero1);
+        jTextFieldValorNumero1.setBounds(55, 5, 185, 30);
+
+        jSpinnerInicio.setModel(new javax.swing.SpinnerDateModel(new java.util.Date(), null, null, java.util.Calendar.MINUTE));
+        jSpinnerInicio.setEnabled(false);
+        jPanelValor1.add(jSpinnerInicio);
+        jSpinnerInicio.setBounds(55, 5, 185, 30);
+
+        jPanelCreacionCondicionales.add(jPanelValor1);
+        jPanelValor1.setBounds(225, 41, 240, 40);
+
         jPanelValor2.setLayout(null);
 
         jLabelValor2.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
@@ -429,14 +334,18 @@ public class PrincipalJFrame extends javax.swing.JFrame {
         jPanelValor2.add(jLabelValor2);
         jLabelValor2.setBounds(5, 5, 45, 30);
 
-        jTextFieldValor2.setEnabled(false);
-        jPanelValor2.add(jTextFieldValor2);
-        jTextFieldValor2.setBounds(55, 5, 185, 30);
+        jTextFieldValorTexto2.setEnabled(false);
+        jPanelValor2.add(jTextFieldValorTexto2);
+        jTextFieldValorTexto2.setBounds(55, 5, 185, 30);
 
         jSpinnerFin.setModel(new javax.swing.SpinnerDateModel(new java.util.Date(), null, null, java.util.Calendar.MINUTE));
         jSpinnerFin.setEnabled(false);
         jPanelValor2.add(jSpinnerFin);
         jSpinnerFin.setBounds(55, 5, 185, 30);
+
+        jTextFieldValorNumero2.setEnabled(false);
+        jPanelValor2.add(jTextFieldValorNumero2);
+        jTextFieldValorNumero2.setBounds(55, 5, 185, 30);
 
         jPanelCreacionCondicionales.add(jPanelValor2);
         jPanelValor2.setBounds(225, 80, 240, 40);
@@ -493,27 +402,6 @@ public class PrincipalJFrame extends javax.swing.JFrame {
         });
         jPanelCreacionCondicionales.add(jComboBoxCampos);
         jComboBoxCampos.setBounds(75, 48, 140, 25);
-
-        jPanelValor1.setLayout(null);
-
-        jLabelValor1.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
-        jLabelValor1.setText("Valor 1");
-        jLabelValor1.setEnabled(false);
-        jPanelValor1.add(jLabelValor1);
-        jLabelValor1.setBounds(5, 5, 45, 30);
-
-        jTextFieldValor1.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
-        jTextFieldValor1.setEnabled(false);
-        jPanelValor1.add(jTextFieldValor1);
-        jTextFieldValor1.setBounds(55, 5, 185, 30);
-
-        jSpinnerInicio.setModel(new javax.swing.SpinnerDateModel(new java.util.Date(), null, null, java.util.Calendar.MINUTE));
-        jSpinnerInicio.setEnabled(false);
-        jPanelValor1.add(jSpinnerInicio);
-        jSpinnerInicio.setBounds(55, 5, 185, 30);
-
-        jPanelCreacionCondicionales.add(jPanelValor1);
-        jPanelValor1.setBounds(225, 41, 240, 40);
 
         jLabelOperador.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
         jLabelOperador.setText("Operador");
@@ -701,10 +589,6 @@ public class PrincipalJFrame extends javax.swing.JFrame {
         }
     }
 
-    private void modificarInputsDeCondiciones(String tipoOperador) {
-
-    }
-
     private void reiniciarTodoElFormulario() {
         //Cada vez que se cambie de tabla, se debe reestablecer a defecto
         //todos los valores y elementos del formulario, excepto la tabla de 
@@ -715,77 +599,87 @@ public class PrincipalJFrame extends javax.swing.JFrame {
         dcbmCampos.removeAllElements();
         dcbmOperadorLogico.removeAllElements();
         dcbmOperadorRelacional.removeAllElements();
-        jTextFieldValor1.setText("");
-        jTextFieldValor2.setText("");
+        jTextFieldValorTexto1.setText("");
+        jTextFieldValorTexto2.setText("");
         jLabelTipDato.setText("");
         jTextAreaSentencia.setText("");
         tipoDeCondicional = TipoDeCondicional.NO_ASIGNADO;
     }
 
     private String obtenerLineaCondicional() {
+        String tipoDato = ((Columna) dcbmCampos.getSelectedItem()).getType();
+        boolean valorUnoVacio = jTextFieldValorTexto1.getText().isEmpty();
+        boolean valorDosVacio = jTextFieldValorTexto2.getText().isEmpty();
+        String valorUno = jTextFieldValorTexto1.getText();
+        String valorDos = jTextFieldValorTexto2.getText();
+        String fechaIni = "'" + Defectos.SDF.format(jSpinnerInicio.getValue()) + "'";
+        String fechaFin = "'" + Defectos.SDF.format(jSpinnerFin.getValue()) + "'";
         String condicional = "";
-        condicional = (dcbmCampos.getSelectedItem().toString()) + " " + (String) dcbmOperadorLogico.getSelectedItem();
         switch (tipoDeCondicional) {
             case TIPO_COMPARACION:
-                if (((Columna) dcbmCampos.getSelectedItem()).getType().equals("DATE")) {
-                    if (!jSpinnerInicio.getValue().toString().isEmpty()) {
-                        condicional += " '" + Defectos.SDF.format(jSpinnerInicio.getValue()) + "'";
-                    } else {
-                        condicional = "";
-                    }
-                    break;
-                }
-            case TIPO_LIKE:
-                if (!jTextFieldValor1.getText().isEmpty()) {
-                    condicional += " " + jTextFieldValor1.getText();
+                if (tipoDato.equals("DATE")) {
+                    condicional = fechaIni;
                 } else {
-                    condicional = "";
+                    if (!valorUnoVacio) {
+                        condicional = valorUno;
+                    }
+                    if (tipoDato.equals("VARCHAR2")) {
+                        condicional = "'" + condicional + "'";
+                    }
+                }
+                break;
+            case TIPO_LIKE:
+                if (!valorUnoVacio) {
+                    condicional = valorUno;
+                    switch (rbtdl) {
+                        case CONTENGA:
+                            condicional = "%" + condicional + "%";
+                            break;
+                        case EMPIECE:
+                            condicional = condicional + "%";
+                            break;
+                        case TERMINE:
+                            condicional = "%" + condicional;
+                            break;
+                    }
+                    condicional = "'" + condicional + "'";
                 }
                 break;
             case TIPO_BETWEEN:
-                if (((Columna) dcbmCampos.getSelectedItem()).getType().equals("NUMBER")) {
-                    if (!jTextFieldValor1.getText().isEmpty() && !jTextFieldValor2.getText().isEmpty()) {
-                        condicional += " " + jTextFieldValor1.getText() + " AND " + jTextFieldValor2.getText();
-                    } else {
-                        condicional = "";
-                    }
+                if (tipoDato.equals("NUMBER") && (!valorUnoVacio && !valorDosVacio)) {
+                    condicional = valorUno + " AND " + valorDos;
                 } else {
-                    if (!jSpinnerInicio.getValue().toString().isEmpty() && !jSpinnerFin.getValue().toString().isEmpty()) {
-                        condicional += " '" + Defectos.SDF.format(jSpinnerInicio.getValue()) + "' AND '"
-                                + Defectos.SDF.format(jSpinnerFin.getValue()) + "'";
-                    } else {
-                        condicional = "";
-                    }
+                    condicional = fechaIni + " AND " + fechaFin;
                 }
                 break;
             case NO_ASIGNADO:
                 break;
         }
+
         return condicional;
     }
 
     private void actualizarSentenciaSql() {
-        StringBuilder sb = new StringBuilder();
-        sb.append("SELECT");
+        String sentencia = "";
+        sentencia = "SELECT ";
         if (dtmDisponibles.getRowCount() == 0 || dtmTomados.getRowCount() == 0) {
-            sb.append(" *");
+            sentencia += "*";
         } else {
             for (int i = 0; i < dtmTomados.getRowCount(); i++) {
-                sb.append(" ").append(dtmTomados.getValueAt(i, 0)).append(",");
+                sentencia += (String) dtmTomados.getValueAt(i, 0);
             }
-            sb.deleteCharAt(sb.length() - 1);
         }
-        sb.append(" FROM ");
-        sb.append(dcbmTablas.getSelectedItem());
+        sentencia += " FROM " + (String) dcbmTablas.getSelectedItem();
         if (dtmCondiciones.getRowCount() > 0) {
-            sb.append(" WHERE ").append(dtmCondiciones.getValueAt(0, 0));
-            for (int i = 1; i < dtmCondiciones.getRowCount(); i++) {
-                sb.append(" ").append(dtmCondiciones.getValueAt(i - 1, 1)).append(" ").append(dtmCondiciones.getValueAt(i, 0));
+            sentencia += " WHERE";
+            for (int i = 0; i < dtmCondiciones.getRowCount() - 1; i++) {
+                sentencia += " " + (String) dtmCondiciones.getValueAt(i, 0) + " " + dtmCondiciones.getValueAt(i, 1);
             }
+            sentencia += " " + (String) dtmCondiciones.getValueAt(dtmCondiciones.getRowCount() - 1, 0);
         }
-        sb.append(";");
+        sentencia += ";";
 
-        jTextAreaSentencia.setText(sb.toString());
+        jTextAreaSentencia.setText(sentencia);
     }
 
 
@@ -860,8 +754,8 @@ public class PrincipalJFrame extends javax.swing.JFrame {
             jSpinnerFin.setVisible(true);*/
             jSpinnerInicio.setVisible(false);
             jSpinnerFin.setVisible(false);
-            jTextFieldValor1.setVisible(true);
-            jTextFieldValor2.setVisible(true);
+            jTextFieldValorTexto1.setVisible(true);
+            jTextFieldValorTexto2.setVisible(true);
             switch (tipoDatoSql) {
                 case "NUMBER":
                     dcbmOperadorLogico.addAll(Defectos.OP_LOGICO_NUMBER_Y_DATE);
@@ -877,9 +771,9 @@ public class PrincipalJFrame extends javax.swing.JFrame {
                 case "DATE":
                     dcbmOperadorLogico.addAll(Defectos.OP_LOGICO_NUMBER_Y_DATE);
                     //jLabelValor1.setVisible(true);
-                    jTextFieldValor1.setVisible(false);
+                    jTextFieldValorTexto1.setVisible(false);
                     //jLabelValor2.setVisible(true);
-                    jTextFieldValor2.setVisible(false);
+                    jTextFieldValorTexto2.setVisible(false);
                     jSpinnerInicio.setVisible(true);
                     jSpinnerFin.setVisible(true);
                     //comillasVisibles(false);
@@ -934,8 +828,9 @@ public class PrincipalJFrame extends javax.swing.JFrame {
     }//GEN-LAST:event_jComboBoxOperadorLogicoItemStateChanged
 
     private void jButtonAgregarCondicionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonAgregarCondicionActionPerformed
-        String sentenciaCondicional = obtenerLineaCondicional();
-        if (!sentenciaCondicional.isEmpty()) {
+        String condicional = obtenerLineaCondicional();
+        if (!condicional.isEmpty() || tipoDeCondicional == TipoDeCondicional.TIPO_NULL) {
+            String sentenciaCondicional = (dcbmCampos.getSelectedItem().toString()) + " " + (String) dcbmOperadorLogico.getSelectedItem() + " " + condicional;
             dtmCondiciones.addRow(new Object[]{sentenciaCondicional, dcbmOperadorRelacional.getSelectedItem()});
             actualizarSentenciaSql();
         } else {
@@ -992,21 +887,21 @@ public class PrincipalJFrame extends javax.swing.JFrame {
     private void jRadioButtonContengaItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_jRadioButtonContengaItemStateChanged
         if (evt.getStateChange() == ItemEvent.SELECTED) {
             rbtdl = RBTipoDeLike.CONTENGA;
-            jTextFieldValor1.setText(jTextFieldValor1.getText());
+
         }
     }//GEN-LAST:event_jRadioButtonContengaItemStateChanged
 
     private void jRadioButtonTermineItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_jRadioButtonTermineItemStateChanged
         if (evt.getStateChange() == ItemEvent.SELECTED) {
             rbtdl = RBTipoDeLike.TERMINE;
-            jTextFieldValor1.setText(jTextFieldValor1.getText());
+
         }
     }//GEN-LAST:event_jRadioButtonTermineItemStateChanged
 
     private void jRadioButtonEmpieceItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_jRadioButtonEmpieceItemStateChanged
         if (evt.getStateChange() == ItemEvent.SELECTED) {
             rbtdl = RBTipoDeLike.EMPIECE;
-            jTextFieldValor1.setText(jTextFieldValor1.getText());
+
         }
     }//GEN-LAST:event_jRadioButtonEmpieceItemStateChanged
     private TablaDinamica generarObjetoTablaDinamica(ArrayList<Columna> cabeceraTabla, JTable contenidoTabla) {
@@ -1190,8 +1085,10 @@ public class PrincipalJFrame extends javax.swing.JFrame {
     private javax.swing.JTable jTableTablaResultado;
     private javax.swing.JTable jTableTomados;
     private javax.swing.JTextArea jTextAreaSentencia;
-    private javax.swing.JTextField jTextFieldValor1;
-    private javax.swing.JTextField jTextFieldValor2;
+    private javax.swing.JTextField jTextFieldValorNumero1;
+    private javax.swing.JTextField jTextFieldValorNumero2;
+    private javax.swing.JTextField jTextFieldValorTexto1;
+    private javax.swing.JTextField jTextFieldValorTexto2;
     // End of variables declaration//GEN-END:variables
 
 }
