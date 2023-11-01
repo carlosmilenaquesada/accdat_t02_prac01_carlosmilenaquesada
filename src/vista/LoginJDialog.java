@@ -17,8 +17,8 @@ public class LoginJDialog extends javax.swing.JDialog {
     public void CrearConexion() {
         String servidor = /*jTextFieldServidor.getText()*/ "localhost";
         String puerto = /*jTextFieldPuerto.getText()*/ "1521";
-        String usuario = /*jTextFieldUsuario.getText()*/ "TEMA_02_PRACTICA_01_AD"/*"AD_TEMA02_FICHAJES"*/;
-        String password = /*jTextFieldPassword.getText()*/ "TEMA_02_PRACTICA_01_AD"/*"AD_TEMA02_FICHAJES"*/;
+        String usuario = /*jTextFieldUsuario.getText()*/ /*"TEMA_02_PRACTICA_01_AD"*/ "AD_TEMA02_FICHAJES";
+        String password = /*jTextFieldPassword.getText()*/ /*"TEMA_02_PRACTICA_01_AD"*/ "AD_TEMA02_FICHAJES";
 
         boolean camposEscritos = true;
 

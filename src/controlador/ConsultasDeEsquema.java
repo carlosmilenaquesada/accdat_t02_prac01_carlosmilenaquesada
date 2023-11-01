@@ -46,7 +46,8 @@ public class ConsultasDeEsquema {
         try {
             rs = dbmd.getColumns(null, Defectos.CONEXION_ESQUEMA, nombreTabla, "%");
             while (rs.next()) {
-                columnasTabla.add(new Columna(rs.getString("COLUMN_NAME"), rs.getString("TYPE_NAME")));
+                columnasTabla.add(new Columna(rs.getString("COLUMN_NAME"), rs.getString("TYPE_NAME"), rs.getInt("COLUMN_SIZE"), rs.getInt("DECIMAL_DIGITS")));
+               
             }
         } catch (SQLException ex) {
             Logger.getLogger(ConsultasDeEsquema.class.getName()).log(Level.SEVERE, null, ex);

@@ -20,11 +20,10 @@ public class ConsultaDeTabla {
         try {
             Statement st = Conexion.getInstance().createStatement();
             ResultSetMetaData rsmd = st.executeQuery(consulta).getMetaData();
-            
+
             int cantidadColumnas = rsmd.getColumnCount();
             for (int i = 1; i <= cantidadColumnas; i++) {
-                cabeceras.add(new Columna(rsmd.getColumnName(i), rsmd.getColumnTypeName(i)));
-                
+                cabeceras.add(new Columna(rsmd.getColumnName(i), rsmd.getColumnTypeName(i), rsmd.getPrecision(i), rsmd.getScale(i)));
             }
 
         } catch (SQLException ex) {
@@ -45,6 +44,5 @@ public class ConsultaDeTabla {
         }
         return rs;
     }
-
 
 }

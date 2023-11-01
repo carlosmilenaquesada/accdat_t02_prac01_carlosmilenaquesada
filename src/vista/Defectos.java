@@ -24,7 +24,7 @@ public abstract class Defectos {
     public static final Color COLOR_ERROR = new Color(238, 152, 151);
 
     public static final List<String> OP_LOGICO_NUMBER_Y_DATE = List.of(
-            "=", "<>", "<", " >", "<=", ">=", "BETWEEN", "NOT BETWEEN", "IS NULL", "IS NOT NULL"
+            "=", "<>", "<", ">", "<=", ">=", "BETWEEN", "NOT BETWEEN", "IS NULL", "IS NOT NULL"
     );
 
     public static final List<String> OP_LOGICO_VARCHAR2 = List.of(

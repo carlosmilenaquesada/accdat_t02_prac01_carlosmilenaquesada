@@ -4,32 +4,18 @@ import java.sql.*;
 import controlador.ConsultasDeEsquema;
 import controlador.ConsultaDeTabla;
 import java.awt.Component;
-
 import java.awt.event.ItemEvent;
 import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JOptionPane;
-
-import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 import modelo.Columna;
 import vista.Defectos.TipoDeCondicional;
-
-import com.google.gson.*;
 import java.io.File;
-import java.io.FileOutputStream;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.ObjectOutputStream;
-
-import javax.swing.JFileChooser;
-
-import javax.swing.filechooser.FileNameExtensionFilter;
-
-import modelo.TablaDinamica;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 import vista.Defectos.RBTipoDeLike;
 
 public class PrincipalJFrame extends javax.swing.JFrame {
@@ -55,9 +41,9 @@ public class PrincipalJFrame extends javax.swing.JFrame {
     ArrayList<Columna> cabecerasTablaFinal = null;
     boolean layoutCargado = false;
 
-    String tipoDatoSql;
     TipoDeCondicional tipoDeCondicional;
-    RBTipoDeLike rbtdl;
+
+    String tipoDatoColumna = "";
 
     public PrincipalJFrame() {
 
@@ -98,9 +84,8 @@ public class PrincipalJFrame extends javax.swing.JFrame {
                     + " existe, pero no tiene tablas registradas.");
         }
         tipoDeCondicional = TipoDeCondicional.NO_ASIGNADO;
-        rbtdl = RBTipoDeLike.NO_ASIGNADO;
+
         cabecerasTablaFinal = new ArrayList<>();
-        tipoDatoSql = "";
 
     }
 
@@ -132,16 +117,22 @@ public class PrincipalJFrame extends javax.swing.JFrame {
             }
         };
         jPanelCreacionCondicionales = new javax.swing.JPanel();
-        jPanelValor1 = new javax.swing.JPanel();
-        jLabelValor1 = new javax.swing.JLabel();
-        jTextFieldValorTexto1 = new javax.swing.JTextField();
-        jTextFieldValorNumero1 = new javax.swing.JTextField();
-        jSpinnerInicio = new javax.swing.JSpinner();
-        jPanelValor2 = new javax.swing.JPanel();
-        jLabelValor2 = new javax.swing.JLabel();
-        jTextFieldValorTexto2 = new javax.swing.JTextField();
-        jSpinnerFin = new javax.swing.JSpinner();
-        jTextFieldValorNumero2 = new javax.swing.JTextField();
+        jPanelEntradasValores = new javax.swing.JPanel();
+        jPanelValorVarcharUno = new javax.swing.JPanel();
+        jLabelValorVarcharUno = new javax.swing.JLabel();
+        jTextFieldValorVarcharUno = new javax.swing.JTextField();
+        jPanelValorNumberUno = new javax.swing.JPanel();
+        jLabelValorNumeroUno = new javax.swing.JLabel();
+        jTextFieldValorNumeroUno = new javax.swing.JTextField();
+        jPanelValorDateInicio = new javax.swing.JPanel();
+        jLabelValorDateInicio = new javax.swing.JLabel();
+        jSpinnerDateInicio = new javax.swing.JSpinner();
+        jPanelValorNumberDos = new javax.swing.JPanel();
+        jLabelValorNumberDos = new javax.swing.JLabel();
+        jTextFieldValorNumberDos = new javax.swing.JTextField();
+        jPanelValorDateFin = new javax.swing.JPanel();
+        jLabelValorDateFin = new javax.swing.JLabel();
+        jSpinnerDateFin = new javax.swing.JSpinner();
         jPanelValorOpcionesLike = new javax.swing.JPanel();
         jRadioButtonEmpiece = new javax.swing.JRadioButton();
         jRadioButtonTermine = new javax.swing.JRadioButton();
@@ -150,7 +141,7 @@ public class PrincipalJFrame extends javax.swing.JFrame {
         jComboBoxCampos = new javax.swing.JComboBox<>();
         jLabelOperador = new javax.swing.JLabel();
         jComboBoxOperadorLogico = new javax.swing.JComboBox<>();
-        jLabelTipDato = new javax.swing.JLabel();
+        jLabelInfoDatoElegido = new javax.swing.JLabel();
         jComboBoxOperadorRelacional = new javax.swing.JComboBox<>();
         jButtonAgregarCondicion = new javax.swing.JButton();
         jScrollPaneCondiciones = new javax.swing.JScrollPane();
@@ -300,93 +291,105 @@ public class PrincipalJFrame extends javax.swing.JFrame {
         jPanelCreacionCondicionales.setBorder(javax.swing.BorderFactory.createTitledBorder(javax.swing.BorderFactory.createEtchedBorder(), "Crear condicional", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Tahoma", 1, 14))); // NOI18N
         jPanelCreacionCondicionales.setLayout(null);
 
-        jPanelValor1.setLayout(null);
+        jPanelEntradasValores.setEnabled(false);
+        jPanelEntradasValores.setOpaque(false);
+        jPanelEntradasValores.setLayout(null);
 
-        jLabelValor1.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
-        jLabelValor1.setText("Valor 1");
-        jLabelValor1.setEnabled(false);
-        jPanelValor1.add(jLabelValor1);
-        jLabelValor1.setBounds(5, 5, 45, 30);
+        jPanelValorVarcharUno.setLayout(null);
 
-        jTextFieldValorTexto1.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
-        jTextFieldValorTexto1.setEnabled(false);
-        jPanelValor1.add(jTextFieldValorTexto1);
-        jTextFieldValorTexto1.setBounds(55, 5, 185, 30);
+        jLabelValorVarcharUno.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+        jLabelValorVarcharUno.setText("Texto 1");
+        jLabelValorVarcharUno.setOpaque(true);
+        jPanelValorVarcharUno.add(jLabelValorVarcharUno);
+        jLabelValorVarcharUno.setBounds(5, 5, 60, 30);
 
-        jTextFieldValorNumero1.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
-        jTextFieldValorNumero1.setEnabled(false);
-        jPanelValor1.add(jTextFieldValorNumero1);
-        jTextFieldValorNumero1.setBounds(55, 5, 185, 30);
+        jTextFieldValorVarcharUno.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        jPanelValorVarcharUno.add(jTextFieldValorVarcharUno);
+        jTextFieldValorVarcharUno.setBounds(80, 5, 160, 30);
 
-        jSpinnerInicio.setModel(new javax.swing.SpinnerDateModel(new java.util.Date(), null, null, java.util.Calendar.MINUTE));
-        jSpinnerInicio.setEnabled(false);
-        jPanelValor1.add(jSpinnerInicio);
-        jSpinnerInicio.setBounds(55, 5, 185, 30);
+        jPanelEntradasValores.add(jPanelValorVarcharUno);
+        jPanelValorVarcharUno.setBounds(0, 0, 240, 40);
 
-        jPanelCreacionCondicionales.add(jPanelValor1);
-        jPanelValor1.setBounds(225, 41, 240, 40);
+        jPanelValorNumberUno.setLayout(null);
 
-        jPanelValor2.setLayout(null);
+        jLabelValorNumeroUno.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+        jLabelValorNumeroUno.setText("Número 1");
+        jLabelValorNumeroUno.setOpaque(true);
+        jPanelValorNumberUno.add(jLabelValorNumeroUno);
+        jLabelValorNumeroUno.setBounds(5, 5, 60, 30);
 
-        jLabelValor2.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
-        jLabelValor2.setText("Valor 2");
-        jLabelValor2.setEnabled(false);
-        jPanelValor2.add(jLabelValor2);
-        jLabelValor2.setBounds(5, 5, 45, 30);
+        jTextFieldValorNumeroUno.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        jPanelValorNumberUno.add(jTextFieldValorNumeroUno);
+        jTextFieldValorNumeroUno.setBounds(80, 5, 160, 30);
 
-        jTextFieldValorTexto2.setEnabled(false);
-        jPanelValor2.add(jTextFieldValorTexto2);
-        jTextFieldValorTexto2.setBounds(55, 5, 185, 30);
+        jPanelEntradasValores.add(jPanelValorNumberUno);
+        jPanelValorNumberUno.setBounds(0, 0, 240, 40);
 
-        jSpinnerFin.setModel(new javax.swing.SpinnerDateModel(new java.util.Date(), null, null, java.util.Calendar.MINUTE));
-        jSpinnerFin.setEnabled(false);
-        jPanelValor2.add(jSpinnerFin);
-        jSpinnerFin.setBounds(55, 5, 185, 30);
+        jPanelValorDateInicio.setLayout(null);
 
-        jTextFieldValorNumero2.setEnabled(false);
-        jPanelValor2.add(jTextFieldValorNumero2);
-        jTextFieldValorNumero2.setBounds(55, 5, 185, 30);
+        jLabelValorDateInicio.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+        jLabelValorDateInicio.setText("Fecha inicio");
+        jLabelValorDateInicio.setOpaque(true);
+        jPanelValorDateInicio.add(jLabelValorDateInicio);
+        jLabelValorDateInicio.setBounds(5, 5, 60, 30);
 
-        jPanelCreacionCondicionales.add(jPanelValor2);
-        jPanelValor2.setBounds(225, 80, 240, 40);
+        jSpinnerDateInicio.setModel(new javax.swing.SpinnerDateModel(new java.util.Date(), null, null, java.util.Calendar.MINUTE));
+        jPanelValorDateInicio.add(jSpinnerDateInicio);
+        jSpinnerDateInicio.setBounds(80, 5, 160, 30);
+
+        jPanelEntradasValores.add(jPanelValorDateInicio);
+        jPanelValorDateInicio.setBounds(0, 0, 240, 40);
+
+        jPanelValorNumberDos.setLayout(null);
+
+        jLabelValorNumberDos.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+        jLabelValorNumberDos.setText("Número 2");
+        jLabelValorNumberDos.setOpaque(true);
+        jPanelValorNumberDos.add(jLabelValorNumberDos);
+        jLabelValorNumberDos.setBounds(5, 5, 60, 30);
+        jPanelValorNumberDos.add(jTextFieldValorNumberDos);
+        jTextFieldValorNumberDos.setBounds(80, 5, 160, 30);
+
+        jPanelEntradasValores.add(jPanelValorNumberDos);
+        jPanelValorNumberDos.setBounds(0, 40, 240, 40);
+
+        jPanelValorDateFin.setLayout(null);
+
+        jLabelValorDateFin.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+        jLabelValorDateFin.setText("Fecha fin");
+        jLabelValorDateFin.setOpaque(true);
+        jPanelValorDateFin.add(jLabelValorDateFin);
+        jLabelValorDateFin.setBounds(5, 5, 60, 30);
+
+        jSpinnerDateFin.setModel(new javax.swing.SpinnerDateModel(new java.util.Date(), null, null, java.util.Calendar.MINUTE));
+        jPanelValorDateFin.add(jSpinnerDateFin);
+        jSpinnerDateFin.setBounds(80, 5, 160, 30);
+
+        jPanelEntradasValores.add(jPanelValorDateFin);
+        jPanelValorDateFin.setBounds(0, 40, 240, 40);
 
         jPanelValorOpcionesLike.setLayout(null);
 
         buttonGroupOpcionesLike.add(jRadioButtonEmpiece);
         jRadioButtonEmpiece.setText("empiece");
-        jRadioButtonEmpiece.setEnabled(false);
-        jRadioButtonEmpiece.addItemListener(new java.awt.event.ItemListener() {
-            public void itemStateChanged(java.awt.event.ItemEvent evt) {
-                jRadioButtonEmpieceItemStateChanged(evt);
-            }
-        });
         jPanelValorOpcionesLike.add(jRadioButtonEmpiece);
         jRadioButtonEmpiece.setBounds(1, 5, 80, 30);
 
         buttonGroupOpcionesLike.add(jRadioButtonTermine);
         jRadioButtonTermine.setText("termine");
-        jRadioButtonTermine.setEnabled(false);
-        jRadioButtonTermine.addItemListener(new java.awt.event.ItemListener() {
-            public void itemStateChanged(java.awt.event.ItemEvent evt) {
-                jRadioButtonTermineItemStateChanged(evt);
-            }
-        });
         jPanelValorOpcionesLike.add(jRadioButtonTermine);
         jRadioButtonTermine.setBounds(81, 5, 80, 30);
 
         buttonGroupOpcionesLike.add(jRadioButtonContenga);
         jRadioButtonContenga.setText("contenga");
-        jRadioButtonContenga.setEnabled(false);
-        jRadioButtonContenga.addItemListener(new java.awt.event.ItemListener() {
-            public void itemStateChanged(java.awt.event.ItemEvent evt) {
-                jRadioButtonContengaItemStateChanged(evt);
-            }
-        });
         jPanelValorOpcionesLike.add(jRadioButtonContenga);
         jRadioButtonContenga.setBounds(161, 5, 80, 30);
 
-        jPanelCreacionCondicionales.add(jPanelValorOpcionesLike);
-        jPanelValorOpcionesLike.setBounds(225, 80, 240, 40);
+        jPanelEntradasValores.add(jPanelValorOpcionesLike);
+        jPanelValorOpcionesLike.setBounds(0, 40, 240, 40);
+
+        jPanelCreacionCondicionales.add(jPanelEntradasValores);
+        jPanelEntradasValores.setBounds(225, 41, 240, 80);
 
         jLabelCampo.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
         jLabelCampo.setText("Campo");
@@ -417,8 +420,10 @@ public class PrincipalJFrame extends javax.swing.JFrame {
         });
         jPanelCreacionCondicionales.add(jComboBoxOperadorLogico);
         jComboBoxOperadorLogico.setBounds(75, 87, 140, 25);
-        jPanelCreacionCondicionales.add(jLabelTipDato);
-        jLabelTipDato.setBounds(10, 20, 220, 25);
+
+        jLabelInfoDatoElegido.setEnabled(false);
+        jPanelCreacionCondicionales.add(jLabelInfoDatoElegido);
+        jLabelInfoDatoElegido.setBounds(10, 20, 300, 20);
 
         jComboBoxOperadorRelacional.setEnabled(false);
         jPanelCreacionCondicionales.add(jComboBoxOperadorRelacional);
@@ -434,6 +439,7 @@ public class PrincipalJFrame extends javax.swing.JFrame {
         jPanelCreacionCondicionales.add(jButtonAgregarCondicion);
         jButtonAgregarCondicion.setBounds(415, 130, 50, 25);
 
+        jScrollPaneCondiciones.setEnabled(false);
         jScrollPaneCondiciones.setFocusable(false);
 
         jTableCondiciones.setModel(new javax.swing.table.DefaultTableModel(
@@ -567,95 +573,81 @@ public class PrincipalJFrame extends javax.swing.JFrame {
         setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
 
-    private void limpiarTabla(DefaultTableModel dtm) {
-        for (int i = dtm.getRowCount() - 1; i >= 0; i--) {
-            dtm.removeRow(i);
-        }
-    }
-
-    private void traspasoDeSeleccionados(JTable tablaOrigen, DefaultTableModel modelOrigen, DefaultTableModel modelDestino) {
-        if (tablaOrigen.getSelectedRowCount() >= 1) {
-            int[] rowsSeleccionadas = tablaOrigen.getSelectedRows();
-            for (int i = rowsSeleccionadas.length - 1; i >= 0; i--) {
-                modelDestino.addRow(new Object[]{modelOrigen.getValueAt(rowsSeleccionadas[i], 0)});
-                modelOrigen.removeRow(rowsSeleccionadas[i]);
-            }
-        }
-    }
-
-    private void traspasoDeTodos(DefaultTableModel modelOrigen, DefaultTableModel modelDestino) {
-        for (int i = modelOrigen.getRowCount() - 1; i >= 0; i--) {
-            modelDestino.addRow(new Object[]{modelOrigen.getValueAt(i, 0)});
-        }
-    }
-
-    private void reiniciarTodoElFormulario() {
-        //Cada vez que se cambie de tabla, se debe reestablecer a defecto
-        //todos los valores y elementos del formulario, excepto la tabla de 
-        //resultados final.
-        limpiarTabla(dtmDisponibles);
-        limpiarTabla(dtmTomados);
-        limpiarTabla(dtmCondiciones);
+    private void reinicioValoresFormulario() {
+        Herramientas.limpiarTabla(dtmDisponibles);
+        Herramientas.limpiarTabla(dtmTomados);
+        Herramientas.limpiarTabla(dtmCondiciones);
         dcbmCampos.removeAllElements();
         dcbmOperadorLogico.removeAllElements();
-        dcbmOperadorRelacional.removeAllElements();
-        jTextFieldValorTexto1.setText("");
-        jTextFieldValorTexto2.setText("");
-        jLabelTipDato.setText("");
+        jLabelInfoDatoElegido.setText("");
         jTextAreaSentencia.setText("");
         tipoDeCondicional = TipoDeCondicional.NO_ASIGNADO;
     }
 
+    private String condicionPorTipoComparacion(String textoUno, String numberUno, String fechaIni) {
+        String condicional = "";
+        if (tipoDatoColumna.equals("VARCHAR2")) {
+            if (!textoUno.isEmpty()) {
+                condicional = "'" + textoUno + "'";
+            }
+        } else {
+            if (tipoDatoColumna.equals("NUMBER")) {
+                condicional = numberUno;
+            } else {
+                condicional = fechaIni;
+            }
+        }
+        return condicional;
+    }
+
+    private String condicionPorTipoLike(String textoUno) {
+        String condicional = "";
+        if (!textoUno.isEmpty()) {
+            if (jRadioButtonEmpiece.isSelected()) {
+                condicional = "'" + textoUno + "%'";
+            } else {
+                if (jRadioButtonTermine.isSelected()) {
+                    condicional = "'%" + textoUno + "'";
+                } else {
+                    condicional = "'%" + textoUno + "%'";
+                }
+            }
+        }
+        return condicional;
+    }
+
+    private String condicionPorTipoBetween(String numberUno, String numberDos, String fechaIni, String fechaFin) {
+        String condicional = "";
+        if (tipoDatoColumna.equals("NUMBER")) {
+            if ((!numberUno.isEmpty() && !numberDos.isEmpty())) {
+                condicional = numberUno + " AND " + numberDos;
+            }
+        } else {
+            condicional = fechaIni + " AND " + fechaFin;
+        }
+        return condicional;
+    }
+
     private String obtenerLineaCondicional() {
-        String tipoDato = ((Columna) dcbmCampos.getSelectedItem()).getType();
-        boolean valorUnoVacio = jTextFieldValorTexto1.getText().isEmpty();
-        boolean valorDosVacio = jTextFieldValorTexto2.getText().isEmpty();
-        String valorUno = jTextFieldValorTexto1.getText();
-        String valorDos = jTextFieldValorTexto2.getText();
-        String fechaIni = "'" + Defectos.SDF.format(jSpinnerInicio.getValue()) + "'";
-        String fechaFin = "'" + Defectos.SDF.format(jSpinnerFin.getValue()) + "'";
+        String valorTextUno = jTextFieldValorVarcharUno.getText();
+        String valorNumberUno = jTextFieldValorNumeroUno.getText();
+        String valorNumeroDos = jTextFieldValorNumberDos.getText();
+        String fechaIni = "'" + Defectos.SDF.format(jSpinnerDateInicio.getValue()) + "'";
+        String fechaFin = "'" + Defectos.SDF.format(jSpinnerDateFin.getValue()) + "'";
         String condicional = "";
         switch (tipoDeCondicional) {
             case TIPO_COMPARACION:
-                if (tipoDato.equals("DATE")) {
-                    condicional = fechaIni;
-                } else {
-                    if (!valorUnoVacio) {
-                        condicional = valorUno;
-                    }
-                    if (tipoDato.equals("VARCHAR2")) {
-                        condicional = "'" + condicional + "'";
-                    }
-                }
+                condicional = condicionPorTipoComparacion(valorTextUno, valorNumberUno, fechaIni);
                 break;
             case TIPO_LIKE:
-                if (!valorUnoVacio) {
-                    condicional = valorUno;
-                    switch (rbtdl) {
-                        case CONTENGA:
-                            condicional = "%" + condicional + "%";
-                            break;
-                        case EMPIECE:
-                            condicional = condicional + "%";
-                            break;
-                        case TERMINE:
-                            condicional = "%" + condicional;
-                            break;
-                    }
-                    condicional = "'" + condicional + "'";
-                }
+                condicional = condicionPorTipoLike(valorTextUno);
                 break;
             case TIPO_BETWEEN:
-                if (tipoDato.equals("NUMBER") && (!valorUnoVacio && !valorDosVacio)) {
-                    condicional = valorUno + " AND " + valorDos;
-                } else {
-                    condicional = fechaIni + " AND " + fechaFin;
-                }
+                condicionPorTipoBetween(valorNumberUno, valorNumeroDos, fechaIni, fechaFin);
                 break;
             case NO_ASIGNADO:
                 break;
         }
-
         return condicional;
     }
 
@@ -673,7 +665,8 @@ public class PrincipalJFrame extends javax.swing.JFrame {
         if (dtmCondiciones.getRowCount() > 0) {
             sentencia += " WHERE";
             for (int i = 0; i < dtmCondiciones.getRowCount() - 1; i++) {
-                sentencia += " " + (String) dtmCondiciones.getValueAt(i, 0) + " " + dtmCondiciones.getValueAt(i, 1);
+                sentencia += " " + (String) dtmCondiciones.getValueAt(i, 0)
+                        + " " + dtmCondiciones.getValueAt(i, 1);
             }
             sentencia += " " + (String) dtmCondiciones.getValueAt(dtmCondiciones.getRowCount() - 1, 0);
         }
@@ -682,53 +675,49 @@ public class PrincipalJFrame extends javax.swing.JFrame {
         jTextAreaSentencia.setText(sentencia);
     }
 
+    private void cargaInicialFormulario() {
+        for (Component c : jPanelSeleccionTabla.getComponents()) {
+            c.setEnabled(true);
+        }
+        for (Component c : jPanelCreacionCondicionales.getComponents()) {
+            c.setEnabled(true);
+        }
+
+        jScrollPaneSentencia.setEnabled(true);
+        jTextAreaSentencia.setEnabled(true);
+        jButtonEjecutarSentencia.setEnabled(true);
+        dcbmOperadorRelacional.addAll(Defectos.OP_RELACIONAL);
+        layoutCargado = true;
+    }
 
     private void jButtonListaTomarUnoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonListaTomarUnoActionPerformed
-        traspasoDeSeleccionados(jTableDisponibles, dtmDisponibles, dtmTomados);
+        Herramientas.traspasoDeSeleccionados(jTableDisponibles, dtmDisponibles, dtmTomados);
         actualizarSentenciaSql();
     }//GEN-LAST:event_jButtonListaTomarUnoActionPerformed
 
     private void jButtonListaTomarTodosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonListaTomarTodosActionPerformed
-        traspasoDeTodos(dtmDisponibles, dtmTomados);
-        limpiarTabla(dtmDisponibles);
+        Herramientas.traspasoDeTodos(dtmDisponibles, dtmTomados);
+        Herramientas.limpiarTabla(dtmDisponibles);
         actualizarSentenciaSql();
     }//GEN-LAST:event_jButtonListaTomarTodosActionPerformed
 
     private void jButtonListaQuitarUnoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonListaQuitarUnoActionPerformed
-        traspasoDeSeleccionados(jTableTomados, dtmTomados, dtmDisponibles);
+        Herramientas.traspasoDeSeleccionados(jTableTomados, dtmTomados, dtmDisponibles);
         actualizarSentenciaSql();
     }//GEN-LAST:event_jButtonListaQuitarUnoActionPerformed
 
     private void jButtonListaQuitarTodosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonListaQuitarTodosActionPerformed
-        traspasoDeTodos(dtmTomados, dtmDisponibles);
-        limpiarTabla(dtmTomados);
+        Herramientas.traspasoDeTodos(dtmTomados, dtmDisponibles);
+        Herramientas.limpiarTabla(dtmTomados);
         actualizarSentenciaSql();
     }//GEN-LAST:event_jButtonListaQuitarTodosActionPerformed
 
     private void jComboBoxTablasItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_jComboBoxTablasItemStateChanged
         if (evt.getStateChange() == ItemEvent.SELECTED) {
-            if (layoutCargado == false) {
-                for (Component c : jPanelSeleccionTabla.getComponents()) {
-                    c.setEnabled(true);
-                }
-                for (Component c : jPanelCreacionCondicionales.getComponents()) {
-                    c.setEnabled(true);
-                }
-                for (Component c : jPanelValor1.getComponents()) {
-                    c.setEnabled(true);
-                }
-                for (Component c : jPanelValor2.getComponents()) {
-                    c.setEnabled(true);
-                }
-                for (Component c : jPanelValorOpcionesLike.getComponents()) {
-                    c.setEnabled(true);
-                }
-                jScrollPaneSentencia.setEnabled(true);
-                jTextAreaSentencia.setEnabled(true);
-                jButtonEjecutarSentencia.setEnabled(true);
-                layoutCargado = true;
+            if (layoutCargado == true) {
+                reinicioValoresFormulario();
             } else {
-                reiniciarTodoElFormulario();
+                cargaInicialFormulario();
             }
 
             columnasTablaEnFoco = cde.obtenerMetasDeColumnasDeTabla((String) dcbmTablas.getSelectedItem());
@@ -744,86 +733,53 @@ public class PrincipalJFrame extends javax.swing.JFrame {
 
     private void jComboBoxCamposItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_jComboBoxCamposItemStateChanged
         if (evt.getStateChange() == ItemEvent.SELECTED) {
-            tipoDatoSql = ((Columna) dcbmCampos.getSelectedItem()).getType();
-            jLabelTipDato.setText("Tipo de dato del campo: " + tipoDatoSql);
+            tipoDatoColumna = ((Columna) dcbmCampos.getSelectedItem()).getType();
+            jLabelInfoDatoElegido.setText("Tipo de dato del campo: " + Herramientas.obtenerDatoConPrecision((Columna) dcbmCampos.getSelectedItem()));
             dcbmOperadorLogico.removeAllElements();
-
-            /*jLabelValor1.setVisible(true);
-            jLabelValor2.setVisible(true);
-            jSpinnerInicio.setVisible(true);
-            jSpinnerFin.setVisible(true);*/
-            jSpinnerInicio.setVisible(false);
-            jSpinnerFin.setVisible(false);
-            jTextFieldValorTexto1.setVisible(true);
-            jTextFieldValorTexto2.setVisible(true);
-            switch (tipoDatoSql) {
-                case "NUMBER":
-                    dcbmOperadorLogico.addAll(Defectos.OP_LOGICO_NUMBER_Y_DATE);
-
-                    //jLabelValor1.setVisible(true);
-                    //jTextFieldValor1.setVisible(true);
-                    //jLabelValor2.setVisible(true);
-                    //jTextFieldValor2.setVisible(true);
-                    //jSpinnerInicio.setVisible(false);
-                    //jSpinnerFin.setVisible(false);
-                    //comillasVisibles(false);
-                    break;
-                case "DATE":
-                    dcbmOperadorLogico.addAll(Defectos.OP_LOGICO_NUMBER_Y_DATE);
-                    //jLabelValor1.setVisible(true);
-                    jTextFieldValorTexto1.setVisible(false);
-                    //jLabelValor2.setVisible(true);
-                    jTextFieldValorTexto2.setVisible(false);
-                    jSpinnerInicio.setVisible(true);
-                    jSpinnerFin.setVisible(true);
-                    //comillasVisibles(false);
-                    break;
-                case "VARCHAR2":
-                    dcbmOperadorLogico.addAll(Defectos.OP_LOGICO_VARCHAR2);
-                    //jLabelValor1.setVisible(true);
-                    //jTextFieldValor1.setVisible(true);
-                    //jLabelValor2.setVisible(false);
-                    //jTextFieldValor2.setVisible(false);
-                    //jSpinnerInicio.setVisible(false);
-                    //jSpinnerFin.setVisible(false);
-
-                    break;
-                default:
-
+            if (tipoDatoColumna.equals("VARCHAR2")) {
+                dcbmOperadorLogico.addAll(Defectos.OP_LOGICO_VARCHAR2);
+            } else {
+                dcbmOperadorLogico.addAll(Defectos.OP_LOGICO_NUMBER_Y_DATE);
             }
-
-            dcbmOperadorLogico.setSelectedItem(dcbmOperadorLogico.getElementAt(0));
-            dcbmOperadorRelacional.addAll(Defectos.OP_RELACIONAL);
             dcbmOperadorRelacional.setSelectedItem(dcbmOperadorRelacional.getElementAt(0));
+            dcbmOperadorLogico.setSelectedItem(dcbmOperadorLogico.getElementAt(0));
+
         }
      }//GEN-LAST:event_jComboBoxCamposItemStateChanged
 
+
     private void jComboBoxOperadorLogicoItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_jComboBoxOperadorLogicoItemStateChanged
         if (evt.getStateChange() == ItemEvent.SELECTED) {
-            String tipoOperador = ((String) dcbmOperadorLogico.getSelectedItem());
-            jPanelValor1.setVisible(true);
-            jPanelValor2.setVisible(false);
-            jPanelValorOpcionesLike.setVisible(false);
-            tipoDeCondicional = TipoDeCondicional.TIPO_COMPARACION;
+            tipoDeCondicional = Herramientas.comprobarTipoCondicional((String) dcbmOperadorLogico.getSelectedItem());
 
-            if (tipoOperador.equals("IS NULL") || tipoOperador.equals("IS NOT NULL")) {
-                jPanelValor1.setVisible(false);
-                jPanelValor2.setVisible(false);
-                tipoDeCondicional = TipoDeCondicional.TIPO_NULL;
-            } else {
-                if (tipoOperador.equals("BETWEEN") || tipoOperador.equals("NOT BETWEEN")) {
-                    jPanelValor1.setVisible(true);
-                    jPanelValor2.setVisible(true);
-                    tipoDeCondicional = TipoDeCondicional.TIPO_BETWEEN;
-                } else {
-                    if (tipoOperador.equals("LIKE") || tipoOperador.equals("NOT LIKE")) {
-                        jPanelValor1.setVisible(true);
-                        jPanelValorOpcionesLike.setVisible(true);
-                        tipoDeCondicional = TipoDeCondicional.TIPO_LIKE;
-                        jRadioButtonContenga.setSelected(true);
-                    }
+            for (Component c : jPanelEntradasValores.getComponents()) {
+                c.setVisible(false);
+
+            }
+            if (!tipoDeCondicional.equals(TipoDeCondicional.TIPO_NULL)) {
+                switch (tipoDatoColumna) {
+                    case "NUMBER":
+                        jPanelValorNumberUno.setVisible(true);
+                        if (tipoDeCondicional.equals(TipoDeCondicional.TIPO_BETWEEN)) {
+                            jPanelValorNumberDos.setVisible(true);
+                        }
+                        break;
+                    case "DATE":
+                        jPanelValorDateInicio.setVisible(true);
+                        if (tipoDeCondicional.equals(TipoDeCondicional.TIPO_BETWEEN)) {
+                            jPanelValorDateFin.setVisible(true);
+                        }
+                        break;
+                    case "VARCHAR2":
+                        jPanelValorVarcharUno.setVisible(true);
+                        if (tipoDeCondicional.equals(TipoDeCondicional.TIPO_LIKE)) {
+                            jPanelValorOpcionesLike.setVisible(true);
+                        }
+                        break;
+                    default:
                 }
             }
+
         }
     }//GEN-LAST:event_jComboBoxOperadorLogicoItemStateChanged
 
@@ -851,7 +807,7 @@ public class PrincipalJFrame extends javax.swing.JFrame {
     }//GEN-LAST:event_jButtonQuitarCondicionActionPerformed
 
     private void jButtonEjecutarSentenciaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonEjecutarSentenciaActionPerformed
-        limpiarTabla(dtmTablaResultado);
+        Herramientas.limpiarTabla(dtmTablaResultado);
         try {
             String sentencia = jTextAreaSentencia.getText();
             sentencia = sentencia.substring(0, sentencia.length() - 1);
@@ -874,142 +830,15 @@ public class PrincipalJFrame extends javax.swing.JFrame {
     }//GEN-LAST:event_jButtonEjecutarSentenciaActionPerformed
 
     private void jButtonExportarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonExportarActionPerformed
-        File file = obtenerFileParaGuardar();
+        File file = Herramientas.obtenerFileParaGuardar();
         if (file != null && file.exists() && file.isFile() && file.canWrite()) {
             if (file.toString().toLowerCase().endsWith("json")) {
-                exportarArchivoJSON(file, generarObjetoTablaDinamica(cabecerasTablaFinal, jTableTablaResultado));
+                Herramientas.exportarArchivoJSON(file, Herramientas.generarObjetoTablaDinamica(cabecerasTablaFinal, jTableTablaResultado));
             } else {
-                exportarArchivoSerializedObject(file, generarObjetoTablaDinamica(cabecerasTablaFinal, jTableTablaResultado));
+                Herramientas.exportarArchivoSerializedObject(file, Herramientas.generarObjetoTablaDinamica(cabecerasTablaFinal, jTableTablaResultado));
             }
         }
     }//GEN-LAST:event_jButtonExportarActionPerformed
-
-    private void jRadioButtonContengaItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_jRadioButtonContengaItemStateChanged
-        if (evt.getStateChange() == ItemEvent.SELECTED) {
-            rbtdl = RBTipoDeLike.CONTENGA;
-
-        }
-    }//GEN-LAST:event_jRadioButtonContengaItemStateChanged
-
-    private void jRadioButtonTermineItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_jRadioButtonTermineItemStateChanged
-        if (evt.getStateChange() == ItemEvent.SELECTED) {
-            rbtdl = RBTipoDeLike.TERMINE;
-
-        }
-    }//GEN-LAST:event_jRadioButtonTermineItemStateChanged
-
-    private void jRadioButtonEmpieceItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_jRadioButtonEmpieceItemStateChanged
-        if (evt.getStateChange() == ItemEvent.SELECTED) {
-            rbtdl = RBTipoDeLike.EMPIECE;
-
-        }
-    }//GEN-LAST:event_jRadioButtonEmpieceItemStateChanged
-    private TablaDinamica generarObjetoTablaDinamica(ArrayList<Columna> cabeceraTabla, JTable contenidoTabla) {
-
-        TablaDinamica td = new TablaDinamica();
-        td.setCabeceraTabla(cabeceraTabla);
-
-        ArrayList<Object> filas = new ArrayList<>();
-        ArrayList<Object> celdas = new ArrayList<>();
-
-        for (int filaTabla = 0; filaTabla < contenidoTabla.getRowCount(); filaTabla++) {
-            for (int columnaTabla = 0; columnaTabla < contenidoTabla.getColumnCount(); columnaTabla++) {
-                celdas.add(contenidoTabla.getValueAt(filaTabla, columnaTabla));
-            }
-            filas.add(celdas);
-            //para limpiar 'celdas' y poder reutilizar la colección en cada ciclo
-            //del for, debe hacerse usando new ArrayList, ya que si se usa
-            //clear, remove ó removeAll, se borrarán los contenidos que le hagan
-            //referencia y en filas también desaparece.
-            celdas = new ArrayList<>();
-        }
-        td.setContenidoTabla(filas);
-        return td;
-    }
-
-    private File obtenerFileParaGuardar() {
-        //Esta función abre un JFileChooser que nos permite crear o seleccionar
-        //una referencia a un File. Además, la he configurado para que solo
-        //admita crear o seleccionar archivos con extensión .json o .ser (.ser
-        //para objetos serializables de java)
-        File file = null;
-        JFileChooser jfc = new JFileChooser();
-        jfc.setDialogTitle("Seleccione un archivo para guardar...");
-        jfc.setFileSelectionMode(JFileChooser.FILES_ONLY);
-        jfc.setFileFilter(new FileNameExtensionFilter("Archivo Java Serialized Object SER (*.ser)", "ser"));
-        jfc.setFileFilter(new FileNameExtensionFilter("Archivo JavaScript Object Notation JSON (*.json)", "json"));
-        jfc.setAcceptAllFileFilterUsed(false);
-        jfc.showDialog(null, "Guardar");
-        if (jfc.getSelectedFile() != null) {
-            String extensionElegida = "." + ((FileNameExtensionFilter) jfc.getFileFilter()).getExtensions()[0];
-            if (!jfc.getSelectedFile().toString().toLowerCase().endsWith(extensionElegida.toLowerCase())) {
-                file = new File(jfc.getSelectedFile().toString() + extensionElegida);
-            } else {
-                file = new File(jfc.getSelectedFile().toString());
-            }
-            if (!file.exists()) {
-                try {
-                    file.createNewFile();
-                } catch (IOException ex) {
-                    JOptionPane.showMessageDialog(null, "No se pudo crear el archivo."
-                            + "\nDescripción del error: " + ex.getMessage());
-                }
-            }
-        }
-        return file;
-    }
-
-    private void exportarArchivoJSON(File archivoDondeGuardar, TablaDinamica objetoAGuardar) {
-        Gson gson = new Gson();
-        String json = gson.toJson(objetoAGuardar);
-        FileWriter fw = null;
-        try {
-            fw = new FileWriter(archivoDondeGuardar);
-            fw.write(json);
-
-        } catch (IOException ex) {
-            Logger.getLogger(PrincipalJFrame.class
-                    .getName()).log(Level.SEVERE, null, ex);
-        } finally {
-            try {
-                if (fw != null) {
-                    fw.close();
-
-                }
-            } catch (IOException ex) {
-                Logger.getLogger(PrincipalJFrame.class
-                        .getName()).log(Level.SEVERE, null, ex);
-            }
-        }
-    }
-
-    private void exportarArchivoSerializedObject(File archivoDondeGuardar, TablaDinamica objetoAGuardar) {
-        FileOutputStream fos = null;
-        ObjectOutputStream oos = null;
-        try {
-            fos = new FileOutputStream(archivoDondeGuardar);
-            oos = new ObjectOutputStream(fos);
-            oos.writeObject(objetoAGuardar);
-
-        } catch (IOException ex) {
-            Logger.getLogger(PrincipalJFrame.class
-                    .getName()).log(Level.SEVERE, null, ex);
-        } finally {
-            try {
-                if (oos != null) {
-                    oos.close();
-                }
-                if (fos != null) {
-                    fos.close();
-
-                }
-            } catch (IOException ex) {
-                Logger.getLogger(PrincipalJFrame.class
-                        .getName()).log(Level.SEVERE, null, ex);
-            }
-        }
-    }
-
     public static void main(String args[]) {
         try {
             for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
@@ -1057,19 +886,26 @@ public class PrincipalJFrame extends javax.swing.JFrame {
     private javax.swing.JComboBox<String> jComboBoxOperadorRelacional;
     private javax.swing.JComboBox<String> jComboBoxTablas;
     private javax.swing.JLabel jLabelCampo;
+    private javax.swing.JLabel jLabelInfoDatoElegido;
     private javax.swing.JLabel jLabelOperador;
     private javax.swing.JLabel jLabelTablas;
-    private javax.swing.JLabel jLabelTipDato;
-    private javax.swing.JLabel jLabelValor1;
-    private javax.swing.JLabel jLabelValor2;
+    private javax.swing.JLabel jLabelValorDateFin;
+    private javax.swing.JLabel jLabelValorDateInicio;
+    private javax.swing.JLabel jLabelValorNumberDos;
+    private javax.swing.JLabel jLabelValorNumeroUno;
+    private javax.swing.JLabel jLabelValorVarcharUno;
     private javax.swing.JPanel jPanelCreacionCondicionales;
+    private javax.swing.JPanel jPanelEntradasValores;
     private javax.swing.JPanel jPanelPrincipal;
     private javax.swing.JPanel jPanelSeleccionTabla;
     private javax.swing.JPanel jPanelSentenciaSql;
     private javax.swing.JPanel jPanelTablaExportacion;
-    private javax.swing.JPanel jPanelValor1;
-    private javax.swing.JPanel jPanelValor2;
+    private javax.swing.JPanel jPanelValorDateFin;
+    private javax.swing.JPanel jPanelValorDateInicio;
+    private javax.swing.JPanel jPanelValorNumberDos;
+    private javax.swing.JPanel jPanelValorNumberUno;
     private javax.swing.JPanel jPanelValorOpcionesLike;
+    private javax.swing.JPanel jPanelValorVarcharUno;
     private javax.swing.JRadioButton jRadioButtonContenga;
     private javax.swing.JRadioButton jRadioButtonEmpiece;
     private javax.swing.JRadioButton jRadioButtonTermine;
@@ -1078,17 +914,16 @@ public class PrincipalJFrame extends javax.swing.JFrame {
     private javax.swing.JScrollPane jScrollPaneSentencia;
     private javax.swing.JScrollPane jScrollPaneTablaResultado;
     private javax.swing.JScrollPane jScrollPaneTomados;
-    private javax.swing.JSpinner jSpinnerFin;
-    private javax.swing.JSpinner jSpinnerInicio;
+    private javax.swing.JSpinner jSpinnerDateFin;
+    private javax.swing.JSpinner jSpinnerDateInicio;
     private javax.swing.JTable jTableCondiciones;
     private javax.swing.JTable jTableDisponibles;
     private javax.swing.JTable jTableTablaResultado;
     private javax.swing.JTable jTableTomados;
     private javax.swing.JTextArea jTextAreaSentencia;
-    private javax.swing.JTextField jTextFieldValorNumero1;
-    private javax.swing.JTextField jTextFieldValorNumero2;
-    private javax.swing.JTextField jTextFieldValorTexto1;
-    private javax.swing.JTextField jTextFieldValorTexto2;
+    private javax.swing.JTextField jTextFieldValorNumberDos;
+    private javax.swing.JTextField jTextFieldValorNumeroUno;
+    private javax.swing.JTextField jTextFieldValorVarcharUno;
     // End of variables declaration//GEN-END:variables
 
 }
