@@ -17,13 +17,9 @@ import modelo.Columna;
 import controlador.Defectos.TipoDeCondicional;
 import java.io.File;
 import java.io.IOException;
-import java.time.LocalDate;
 import java.util.Date;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 public class PrincipalJFrame extends javax.swing.JFrame {
-
     //Creación de mis variables-------------------------------------------------
     //Combo Box model
     DefaultComboBoxModel<String> dcbmTablas;
@@ -100,6 +96,7 @@ public class PrincipalJFrame extends javax.swing.JFrame {
         buttonGroupOpcionesLike = new javax.swing.ButtonGroup();
         jPanelPrincipal = new javax.swing.JPanel();
         jPanelSeleccionTabla = new javax.swing.JPanel();
+        jLabelSelectTabla = new javax.swing.JLabel();
         jLabelTablas = new javax.swing.JLabel();
         jComboBoxTablas = new javax.swing.JComboBox<>();
         jScrollPaneDisponibles = new javax.swing.JScrollPane();
@@ -121,6 +118,7 @@ public class PrincipalJFrame extends javax.swing.JFrame {
             }
         };
         jPanelCreacionCondicionales = new javax.swing.JPanel();
+        jLabelCreacionCondicionales = new javax.swing.JLabel();
         jPanelEntradasValores = new javax.swing.JPanel();
         jPanelValorVarcharUno = new javax.swing.JPanel();
         jLabelValorVarcharUno = new javax.swing.JLabel();
@@ -157,10 +155,12 @@ public class PrincipalJFrame extends javax.swing.JFrame {
         };
         jButtonQuitarCondicion = new javax.swing.JButton();
         jPanelSentenciaSql = new javax.swing.JPanel();
+        jLabelSentenciaSql = new javax.swing.JLabel();
         jScrollPaneSentencia = new javax.swing.JScrollPane();
         jTextAreaSentencia = new javax.swing.JTextArea();
         jButtonEjecutarSentencia = new javax.swing.JButton();
         jPanelTablaExportacion = new javax.swing.JPanel();
+        jLabelSentenciaSql1 = new javax.swing.JLabel();
         jScrollPaneTablaResultado = new javax.swing.JScrollPane();
         jTableTablaResultado = new javax.swing.JTable(){
             @Override
@@ -172,11 +172,17 @@ public class PrincipalJFrame extends javax.swing.JFrame {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Tema 02. Práctica 01. Metadatos");
+        setResizable(false);
 
         jPanelPrincipal.setLayout(null);
 
-        jPanelSeleccionTabla.setBorder(javax.swing.BorderFactory.createTitledBorder(javax.swing.BorderFactory.createEtchedBorder(), "Seleccionar tabla", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Tahoma", 1, 14))); // NOI18N
+        jPanelSeleccionTabla.setBorder(javax.swing.BorderFactory.createEtchedBorder());
         jPanelSeleccionTabla.setLayout(null);
+
+        jLabelSelectTabla.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        jLabelSelectTabla.setText("Selección de tablas y campos");
+        jPanelSeleccionTabla.add(jLabelSelectTabla);
+        jLabelSelectTabla.setBounds(10, 5, 430, 25);
 
         jLabelTablas.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
         jLabelTablas.setText("Tabla");
@@ -292,8 +298,13 @@ public class PrincipalJFrame extends javax.swing.JFrame {
         jPanelPrincipal.add(jPanelSeleccionTabla);
         jPanelSeleccionTabla.setBounds(10, 10, 450, 300);
 
-        jPanelCreacionCondicionales.setBorder(javax.swing.BorderFactory.createTitledBorder(javax.swing.BorderFactory.createEtchedBorder(), "Crear condicional", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Tahoma", 1, 14))); // NOI18N
+        jPanelCreacionCondicionales.setBorder(javax.swing.BorderFactory.createEtchedBorder());
         jPanelCreacionCondicionales.setLayout(null);
+
+        jLabelCreacionCondicionales.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        jLabelCreacionCondicionales.setText("Creación de condiciones");
+        jPanelCreacionCondicionales.add(jLabelCreacionCondicionales);
+        jLabelCreacionCondicionales.setBounds(10, 5, 460, 25);
 
         jPanelEntradasValores.setEnabled(false);
         jPanelEntradasValores.setOpaque(false);
@@ -433,9 +444,10 @@ public class PrincipalJFrame extends javax.swing.JFrame {
         jPanelCreacionCondicionales.add(jComboBoxOperadorLogico);
         jComboBoxOperadorLogico.setBounds(75, 87, 140, 25);
 
+        jLabelInfoDatoElegido.setFont(new java.awt.Font("Segoe UI", 0, 11)); // NOI18N
         jLabelInfoDatoElegido.setEnabled(false);
         jPanelCreacionCondicionales.add(jLabelInfoDatoElegido);
-        jLabelInfoDatoElegido.setBounds(10, 20, 300, 20);
+        jLabelInfoDatoElegido.setBounds(10, 30, 300, 15);
 
         jComboBoxOperadorRelacional.setEnabled(false);
         jPanelCreacionCondicionales.add(jComboBoxOperadorRelacional);
@@ -451,7 +463,6 @@ public class PrincipalJFrame extends javax.swing.JFrame {
         jPanelCreacionCondicionales.add(jButtonAgregarCondicion);
         jButtonAgregarCondicion.setBounds(415, 130, 50, 25);
 
-        jScrollPaneCondiciones.setEnabled(false);
         jScrollPaneCondiciones.setFocusable(false);
 
         jTableCondiciones.setModel(new javax.swing.table.DefaultTableModel(
@@ -494,9 +505,15 @@ public class PrincipalJFrame extends javax.swing.JFrame {
         jPanelPrincipal.add(jPanelCreacionCondicionales);
         jPanelCreacionCondicionales.setBounds(470, 10, 480, 300);
 
-        jPanelSentenciaSql.setBorder(javax.swing.BorderFactory.createTitledBorder(javax.swing.BorderFactory.createEtchedBorder(), "Sentencia SQL generada", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Tahoma", 1, 14))); // NOI18N
+        jPanelSentenciaSql.setBorder(javax.swing.BorderFactory.createEtchedBorder());
         jPanelSentenciaSql.setLayout(null);
 
+        jLabelSentenciaSql.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        jLabelSentenciaSql.setText("Sentencia SQL a ejecutar");
+        jPanelSentenciaSql.add(jLabelSentenciaSql);
+        jLabelSentenciaSql.setBounds(10, 5, 430, 25);
+
+        jScrollPaneSentencia.setDoubleBuffered(true);
         jScrollPaneSentencia.setEnabled(false);
         jScrollPaneSentencia.setFocusable(false);
 
@@ -508,7 +525,7 @@ public class PrincipalJFrame extends javax.swing.JFrame {
         jScrollPaneSentencia.setViewportView(jTextAreaSentencia);
 
         jPanelSentenciaSql.add(jScrollPaneSentencia);
-        jScrollPaneSentencia.setBounds(10, 20, 805, 105);
+        jScrollPaneSentencia.setBounds(10, 35, 805, 105);
 
         jButtonEjecutarSentencia.setText("Ejecutar");
         jButtonEjecutarSentencia.setEnabled(false);
@@ -518,13 +535,18 @@ public class PrincipalJFrame extends javax.swing.JFrame {
             }
         });
         jPanelSentenciaSql.add(jButtonEjecutarSentencia);
-        jButtonEjecutarSentencia.setBounds(820, 60, 90, 25);
+        jButtonEjecutarSentencia.setBounds(830, 75, 90, 25);
 
         jPanelPrincipal.add(jPanelSentenciaSql);
-        jPanelSentenciaSql.setBounds(10, 320, 940, 135);
+        jPanelSentenciaSql.setBounds(10, 320, 940, 150);
 
-        jPanelTablaExportacion.setBorder(javax.swing.BorderFactory.createTitledBorder(javax.swing.BorderFactory.createEtchedBorder(), "Resultado de la consulta", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Tahoma", 1, 14))); // NOI18N
+        jPanelTablaExportacion.setBorder(javax.swing.BorderFactory.createEtchedBorder());
         jPanelTablaExportacion.setLayout(null);
+
+        jLabelSentenciaSql1.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        jLabelSentenciaSql1.setText("Tabla generada");
+        jPanelTablaExportacion.add(jLabelSentenciaSql1);
+        jLabelSentenciaSql1.setBounds(10, 5, 430, 25);
 
         jScrollPaneTablaResultado.setFocusable(false);
 
@@ -554,7 +576,7 @@ public class PrincipalJFrame extends javax.swing.JFrame {
         }
 
         jPanelTablaExportacion.add(jScrollPaneTablaResultado);
-        jScrollPaneTablaResultado.setBounds(10, 20, 805, 195);
+        jScrollPaneTablaResultado.setBounds(10, 35, 805, 195);
 
         jButtonExportar.setText("Exportar");
         jButtonExportar.setEnabled(false);
@@ -564,10 +586,10 @@ public class PrincipalJFrame extends javax.swing.JFrame {
             }
         });
         jPanelTablaExportacion.add(jButtonExportar);
-        jButtonExportar.setBounds(820, 105, 90, 25);
+        jButtonExportar.setBounds(830, 120, 90, 25);
 
         jPanelPrincipal.add(jPanelTablaExportacion);
-        jPanelTablaExportacion.setBounds(10, 465, 940, 225);
+        jPanelTablaExportacion.setBounds(10, 485, 940, 240);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -579,7 +601,7 @@ public class PrincipalJFrame extends javax.swing.JFrame {
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jPanelPrincipal, javax.swing.GroupLayout.PREFERRED_SIZE, 700, javax.swing.GroupLayout.PREFERRED_SIZE)
+            .addComponent(jPanelPrincipal, javax.swing.GroupLayout.PREFERRED_SIZE, 735, javax.swing.GroupLayout.PREFERRED_SIZE)
         );
 
         pack();
@@ -943,8 +965,12 @@ public class PrincipalJFrame extends javax.swing.JFrame {
     private javax.swing.JComboBox<String> jComboBoxOperadorRelacional;
     private javax.swing.JComboBox<String> jComboBoxTablas;
     private javax.swing.JLabel jLabelCampo;
+    private javax.swing.JLabel jLabelCreacionCondicionales;
     private javax.swing.JLabel jLabelInfoDatoElegido;
     private javax.swing.JLabel jLabelOperador;
+    private javax.swing.JLabel jLabelSelectTabla;
+    private javax.swing.JLabel jLabelSentenciaSql;
+    private javax.swing.JLabel jLabelSentenciaSql1;
     private javax.swing.JLabel jLabelTablas;
     private javax.swing.JLabel jLabelValorDateFin;
     private javax.swing.JLabel jLabelValorDateInicio;
