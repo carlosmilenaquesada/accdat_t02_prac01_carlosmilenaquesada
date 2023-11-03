@@ -602,6 +602,8 @@ public class PrincipalJFrame extends javax.swing.JFrame {
         if (tipoDatoColumna.equals("VARCHAR2")) {
             if (!textoUno.isEmpty()) {
                 condicional = "'" + textoUno + "'";
+            } else {
+                JOptionPane.showMessageDialog(null, Defectos.MENSAJES[14]);
             }
         } else {
             if (tipoDatoColumna.equals("NUMBER")) {
@@ -619,15 +621,13 @@ public class PrincipalJFrame extends javax.swing.JFrame {
 
     private String condicionPorTipoLike(String textoUno) {
         String condicional = "";
-        if (!textoUno.isEmpty()) {
-            if (jRadioButtonEmpiece.isSelected()) {
-                condicional = "'" + textoUno + "%'";
+        if (jRadioButtonEmpiece.isSelected()) {
+            condicional = "'" + textoUno + "%'";
+        } else {
+            if (jRadioButtonTermine.isSelected()) {
+                condicional = "'%" + textoUno + "'";
             } else {
-                if (jRadioButtonTermine.isSelected()) {
-                    condicional = "'%" + textoUno + "'";
-                } else {
-                    condicional = "'%" + textoUno + "%'";
-                }
+                condicional = "'%" + textoUno + "%'";
             }
         }
         return condicional;
@@ -893,7 +893,7 @@ public class PrincipalJFrame extends javax.swing.JFrame {
             }
         } catch (IOException ex) {
             JOptionPane.showMessageDialog(null, Defectos.MENSAJES[13]
-                    +  Defectos.MENSAJES[10]+ ex.getMessage());
+                    + Defectos.MENSAJES[10] + ex.getMessage());
         }
     }//GEN-LAST:event_jButtonExportarActionPerformed
     public static void main(String args[]) {

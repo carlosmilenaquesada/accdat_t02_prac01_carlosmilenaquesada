@@ -47,7 +47,8 @@ public abstract class Defectos {
         "\nDescripción del Error: ",
         "Código Error: ",
         "Considere cambiar el formato de fecha de la DB.",
-        "No se pudo crear el archivo."
+        "No se pudo crear el archivo.",
+        "Si el valor del texto está vacío, no se mostrará ningún resultado en este tipo de consulta."
             
 
     };
