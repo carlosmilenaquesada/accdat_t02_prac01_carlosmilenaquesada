@@ -1,5 +1,6 @@
 package vista;
 
+import controlador.Defectos;
 import controlador.Conexion;
 import java.sql.SQLException;
 import javax.swing.JOptionPane;
@@ -43,12 +44,10 @@ public class LoginJDialog extends javax.swing.JDialog {
                     dispose();
                 }
             } catch (SQLException ex) {
-                JOptionPane.showMessageDialog(null, "No se ha establecido"
-                        + " una conexión válida con el servidor.", "Error", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(null, Defectos.MENSAJES[0], "Error", JOptionPane.ERROR_MESSAGE);
             }
-            System.out.println("hola");
         } else {
-            JOptionPane.showMessageDialog(null, "Debe ingresar todos los campos.", "Error", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(null, Defectos.MENSAJES[1], "Error", JOptionPane.ERROR_MESSAGE);
         }
     }
 

@@ -1,4 +1,4 @@
-package vista;
+package controlador;
 
 import com.google.gson.Gson;
 import java.io.File;
@@ -10,22 +10,21 @@ import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JFileChooser;
-import javax.swing.JOptionPane;
 import javax.swing.JTable;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.table.DefaultTableModel;
 import modelo.Columna;
 import modelo.TablaDinamica;
-
+import vista.PrincipalJFrame;
 
 public class Herramientas {
-    
+
     public static void limpiarTabla(DefaultTableModel dtm) {
         for (int i = dtm.getRowCount() - 1; i >= 0; i--) {
             dtm.removeRow(i);
         }
     }
-    
+
     public static void traspasoDeSeleccionados(JTable tablaOrigen, DefaultTableModel modelOrigen, DefaultTableModel modelDestino) {
         if (tablaOrigen.getSelectedRowCount() >= 1) {
             int[] rowsSeleccionadas = tablaOrigen.getSelectedRows();
@@ -35,22 +34,21 @@ public class Herramientas {
             }
         }
     }
-    
+
     public static void traspasoDeTodos(DefaultTableModel modelOrigen, DefaultTableModel modelDestino) {
         for (int i = modelOrigen.getRowCount() - 1; i >= 0; i--) {
             modelDestino.addRow(new Object[]{modelOrigen.getValueAt(i, 0)});
         }
     }
-    
-    
+
     public static TablaDinamica generarObjetoTablaDinamica(ArrayList<Columna> cabeceraTabla, JTable contenidoTabla) {
-        
+
         TablaDinamica td = new TablaDinamica();
         td.setCabeceraTabla(cabeceraTabla);
-        
+
         ArrayList<Object> filas = new ArrayList<>();
         ArrayList<Object> celdas = new ArrayList<>();
-        
+
         for (int filaTabla = 0; filaTabla < contenidoTabla.getRowCount(); filaTabla++) {
             for (int columnaTabla = 0; columnaTabla < contenidoTabla.getColumnCount(); columnaTabla++) {
                 celdas.add(contenidoTabla.getValueAt(filaTabla, columnaTabla));
@@ -65,8 +63,8 @@ public class Herramientas {
         td.setContenidoTabla(filas);
         return td;
     }
-    
-    public static File obtenerFileParaGuardar() {
+
+    public static File obtenerFileParaGuardar() throws IOException {
         File file = null;
         JFileChooser jfc = new JFileChooser();
         jfc.setDialogTitle("Seleccione un archivo para guardar...");
@@ -83,18 +81,12 @@ public class Herramientas {
                 file = new File(jfc.getSelectedFile().toString());
             }
             if (!file.exists()) {
-                try {
-                    file.createNewFile();
-                } catch (IOException ex) {
-                    JOptionPane.showMessageDialog(null, "No se pudo crear el archivo."
-                            + "\nDescripción del error: " + ex.getMessage());
-                }
+                file.createNewFile();
             }
         }
         return file;
     }
-    
-    
+
     public static void exportarArchivoJSON(File archivoDondeGuardar, TablaDinamica objetoAGuardar) {
         Gson gson = new Gson();
         String json = gson.toJson(objetoAGuardar);
@@ -144,6 +136,7 @@ public class Herramientas {
             }
         }
     }
+
     public static String obtenerDatoConPrecision(Columna columna) {
         String datoCompleto = columna.getType();
         if (datoCompleto.equals("NUMBER")) {
@@ -155,7 +148,7 @@ public class Herramientas {
         }
         return datoCompleto;
     }
-    
+
     public static Defectos.TipoDeCondicional comprobarTipoCondicional(String tipoOperador) {
         Defectos.TipoDeCondicional tipo;
         switch (tipoOperador) {

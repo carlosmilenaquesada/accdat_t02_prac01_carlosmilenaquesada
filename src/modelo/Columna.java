@@ -16,25 +16,41 @@ public class Columna implements Serializable {
         this.scale = scale;
     }
 
-    @Override
-    public String toString() {
+    public String getName() {
         return name;
     }
 
-    public String getName() {
-        return name;
+    public void setName(String name) {
+        this.name = name;
     }
 
     public String getType() {
         return type;
     }
 
+    public void setType(String type) {
+        this.type = type;
+    }
+
     public int getPrecision() {
         return precision;
     }
 
+    public void setPrecision(int precision) {
+        this.precision = precision;
+    }
+
     public int getScale() {
         return scale;
+    }
+
+    public void setScale(int scale) {
+        this.scale = scale;
+    }
+
+    @Override
+    public String toString() {
+        return this.name;
     }
 
 }

@@ -5,7 +5,6 @@ import java.sql.SQLException;
 import java.sql.ResultSet;
 import java.util.ArrayList;
 import modelo.Columna;
-import vista.Defectos;
 
 public class ConsultasDeEsquema {
     public static ArrayList<String> obtenerNombreTablas() throws SQLException {
