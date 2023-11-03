@@ -102,7 +102,6 @@ public class Herramientas {
         try {
             fw = new FileWriter(archivoDondeGuardar);
             fw.write(json);
-
         } catch (IOException ex) {
             Logger.getLogger(PrincipalJFrame.class
                     .getName()).log(Level.SEVERE, null, ex);

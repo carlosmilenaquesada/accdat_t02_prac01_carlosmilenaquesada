@@ -1,29 +1,23 @@
 package vista;
 
-import java.sql.*;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import controlador.ConsultasDeEsquema;
 import controlador.ConsultaDeTabla;
+
 import java.awt.Component;
 import java.awt.event.ItemEvent;
 import java.util.ArrayList;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 import modelo.Columna;
 import vista.Defectos.TipoDeCondicional;
 import java.io.File;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
-import vista.Defectos.RBTipoDeLike;
 
 public class PrincipalJFrame extends javax.swing.JFrame {
 
     //Creación de mis variables-------------------------------------------------
-    //Controladores
-    ConsultasDeEsquema cde = null;
-    ConsultaDeTabla cdt = null;
     //Combo Box model
     DefaultComboBoxModel<String> dcbmTablas;
     DefaultComboBoxModel<Columna> dcbmCampos;
@@ -70,15 +64,17 @@ public class PrincipalJFrame extends javax.swing.JFrame {
         dtmCondiciones = (DefaultTableModel) jTableCondiciones.getModel();
         dtmTablaResultado = (DefaultTableModel) jTableTablaResultado.getModel();
 
-        //Controladores
-        cde = new ConsultasDeEsquema();
-        cdt = new ConsultaDeTabla();
-
         //Colecciones 
         columnasTablaEnFoco = new ArrayList<>();
 
-        //Rellenar lista de tablas inicial
-        dcbmTablas.addAll(cde.obtenerNombreTablas());
+        try {
+            //Rellenar lista de tablas inicial
+            dcbmTablas.addAll(ConsultasDeEsquema.obtenerNombreTablas());
+        } catch (SQLException ex) {
+            JOptionPane.showMessageDialog(null, "No su pudo cargar las tablas correctamente."
+                    + "\nSe cerrará el programa.");
+            System.exit(0);
+        }
         if (dcbmTablas.getSize() == 0) {
             JOptionPane.showMessageDialog(null, "El usuario/esquema proporcionado"
                     + " existe, pero no tiene tablas registradas.");
@@ -86,6 +82,7 @@ public class PrincipalJFrame extends javax.swing.JFrame {
         tipoDeCondicional = TipoDeCondicional.NO_ASIGNADO;
 
         cabecerasTablaFinal = new ArrayList<>();
+        
 
     }
 
@@ -122,7 +119,7 @@ public class PrincipalJFrame extends javax.swing.JFrame {
         jLabelValorVarcharUno = new javax.swing.JLabel();
         jTextFieldValorVarcharUno = new javax.swing.JTextField();
         jPanelValorNumberUno = new javax.swing.JPanel();
-        jLabelValorNumeroUno = new javax.swing.JLabel();
+        jLabelValorNumberUno = new javax.swing.JLabel();
         jTextFieldValorNumeroUno = new javax.swing.JTextField();
         jPanelValorDateInicio = new javax.swing.JPanel();
         jLabelValorDateInicio = new javax.swing.JLabel();
@@ -312,11 +309,11 @@ public class PrincipalJFrame extends javax.swing.JFrame {
 
         jPanelValorNumberUno.setLayout(null);
 
-        jLabelValorNumeroUno.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
-        jLabelValorNumeroUno.setText("Número 1");
-        jLabelValorNumeroUno.setOpaque(true);
-        jPanelValorNumberUno.add(jLabelValorNumeroUno);
-        jLabelValorNumeroUno.setBounds(5, 5, 60, 30);
+        jLabelValorNumberUno.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+        jLabelValorNumberUno.setText("Número 1");
+        jLabelValorNumberUno.setOpaque(true);
+        jPanelValorNumberUno.add(jLabelValorNumberUno);
+        jLabelValorNumberUno.setBounds(5, 5, 60, 30);
 
         jTextFieldValorNumeroUno.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         jPanelValorNumberUno.add(jTextFieldValorNumeroUno);
@@ -371,6 +368,7 @@ public class PrincipalJFrame extends javax.swing.JFrame {
         jPanelValorOpcionesLike.setLayout(null);
 
         buttonGroupOpcionesLike.add(jRadioButtonEmpiece);
+        jRadioButtonEmpiece.setSelected(true);
         jRadioButtonEmpiece.setText("empiece");
         jPanelValorOpcionesLike.add(jRadioButtonEmpiece);
         jRadioButtonEmpiece.setBounds(1, 5, 80, 30);
@@ -463,7 +461,7 @@ public class PrincipalJFrame extends javax.swing.JFrame {
         jScrollPaneCondiciones.setViewportView(jTableCondiciones);
         if (jTableCondiciones.getColumnModel().getColumnCount() > 0) {
             jTableCondiciones.getColumnModel().getColumn(0).setResizable(false);
-            jTableCondiciones.getColumnModel().getColumn(1).setResizable(false);
+            jTableCondiciones.getColumnModel().getColumn(1).setMaxWidth(80);
         }
 
         jPanelCreacionCondicionales.add(jScrollPaneCondiciones);
@@ -631,7 +629,7 @@ public class PrincipalJFrame extends javax.swing.JFrame {
     private String obtenerLineaCondicional() {
         String valorTextUno = jTextFieldValorVarcharUno.getText();
         String valorNumberUno = jTextFieldValorNumeroUno.getText();
-        String valorNumeroDos = jTextFieldValorNumberDos.getText();
+        String valorNumberDos = jTextFieldValorNumberDos.getText();
         String fechaIni = "'" + Defectos.SDF.format(jSpinnerDateInicio.getValue()) + "'";
         String fechaFin = "'" + Defectos.SDF.format(jSpinnerDateFin.getValue()) + "'";
         String condicional = "";
@@ -643,7 +641,7 @@ public class PrincipalJFrame extends javax.swing.JFrame {
                 condicional = condicionPorTipoLike(valorTextUno);
                 break;
             case TIPO_BETWEEN:
-                condicionPorTipoBetween(valorNumberUno, valorNumeroDos, fechaIni, fechaFin);
+                condicional = condicionPorTipoBetween(valorNumberUno, valorNumberDos, fechaIni, fechaFin);
                 break;
             case NO_ASIGNADO:
                 break;
@@ -653,20 +651,21 @@ public class PrincipalJFrame extends javax.swing.JFrame {
 
     private void actualizarSentenciaSql() {
         String sentencia = "";
-        sentencia = "SELECT ";
+        sentencia = "SELECT";
         if (dtmDisponibles.getRowCount() == 0 || dtmTomados.getRowCount() == 0) {
-            sentencia += "*";
+            sentencia += " *";
         } else {
             for (int i = 0; i < dtmTomados.getRowCount(); i++) {
-                sentencia += (String) dtmTomados.getValueAt(i, 0);
+                sentencia += " " + (String) dtmTomados.getValueAt(i, 0) + ",";
             }
+            sentencia = sentencia.substring(0, sentencia.length() - 1);
         }
-        sentencia += " FROM " + (String) dcbmTablas.getSelectedItem();
+        sentencia += "\nFROM " + (String) dcbmTablas.getSelectedItem();
         if (dtmCondiciones.getRowCount() > 0) {
-            sentencia += " WHERE";
+            sentencia += "\nWHERE";
             for (int i = 0; i < dtmCondiciones.getRowCount() - 1; i++) {
                 sentencia += " " + (String) dtmCondiciones.getValueAt(i, 0)
-                        + " " + dtmCondiciones.getValueAt(i, 1);
+                        + " \n" + dtmCondiciones.getValueAt(i, 1);
             }
             sentencia += " " + (String) dtmCondiciones.getValueAt(dtmCondiciones.getRowCount() - 1, 0);
         }
@@ -719,8 +718,11 @@ public class PrincipalJFrame extends javax.swing.JFrame {
             } else {
                 cargaInicialFormulario();
             }
-
-            columnasTablaEnFoco = cde.obtenerMetasDeColumnasDeTabla((String) dcbmTablas.getSelectedItem());
+            try {
+                columnasTablaEnFoco = ConsultasDeEsquema.obtenerMetasDeColumnasDeTabla((String) dcbmTablas.getSelectedItem());
+            } catch (SQLException ex) {
+                JOptionPane.showMessageDialog(null, "No se pudieron cargar los campos de las tablas.");
+            }
             for (Columna columna : columnasTablaEnFoco) {
                 dtmDisponibles.addRow(new String[]{columna.getName()});
             }
@@ -789,8 +791,6 @@ public class PrincipalJFrame extends javax.swing.JFrame {
             String sentenciaCondicional = (dcbmCampos.getSelectedItem().toString()) + " " + (String) dcbmOperadorLogico.getSelectedItem() + " " + condicional;
             dtmCondiciones.addRow(new Object[]{sentenciaCondicional, dcbmOperadorRelacional.getSelectedItem()});
             actualizarSentenciaSql();
-        } else {
-            JOptionPane.showMessageDialog(null, "Debe proporcionar una consulta correcta.");
         }
     }//GEN-LAST:event_jButtonAgregarCondicionActionPerformed
 
@@ -811,9 +811,9 @@ public class PrincipalJFrame extends javax.swing.JFrame {
         try {
             String sentencia = jTextAreaSentencia.getText();
             sentencia = sentencia.substring(0, sentencia.length() - 1);
-            cabecerasTablaFinal = cdt.obtenerCabeceraParaTablaFinal(sentencia);
+            cabecerasTablaFinal = ConsultaDeTabla.obtenerCabeceraParaTablaFinal(sentencia);
             dtmTablaResultado.setColumnIdentifiers(cabecerasTablaFinal.toArray());
-            ResultSet rs = cdt.obtenerContenidoParaTablaFinal(sentencia);
+            ResultSet rs = ConsultaDeTabla.obtenerContenidoParaTablaFinal(sentencia);
             while (rs.next()) {
                 ArrayList<Object> contenidoRow = new ArrayList<>();
                 for (int i = 1; i <= jTableTablaResultado.getColumnCount(); i++) {
@@ -824,8 +824,16 @@ public class PrincipalJFrame extends javax.swing.JFrame {
             jButtonExportar.setEnabled(true);
 
         } catch (SQLException ex) {
-            Logger.getLogger(PrincipalJFrame.class
-                    .getName()).log(Level.SEVERE, null, ex);
+            String falloFecha = "";
+            if (ex.getErrorCode() == 1830) {
+                falloFecha = "Considere cambiar el formato de fecha de la DB.";
+            }
+            JOptionPane.showMessageDialog(null, "La consulta proporcionada no se puede ejecutar."
+                    + "\nDescripción Error: " + ex.getMessage()
+                    + "Código Error: " + ex.getErrorCode() + "\n"
+                    + falloFecha
+            );
+
         }
     }//GEN-LAST:event_jButtonEjecutarSentenciaActionPerformed
 
@@ -892,7 +900,7 @@ public class PrincipalJFrame extends javax.swing.JFrame {
     private javax.swing.JLabel jLabelValorDateFin;
     private javax.swing.JLabel jLabelValorDateInicio;
     private javax.swing.JLabel jLabelValorNumberDos;
-    private javax.swing.JLabel jLabelValorNumeroUno;
+    private javax.swing.JLabel jLabelValorNumberUno;
     private javax.swing.JLabel jLabelValorVarcharUno;
     private javax.swing.JPanel jPanelCreacionCondicionales;
     private javax.swing.JPanel jPanelEntradasValores;

@@ -1,9 +1,9 @@
 package vista;
 
 import controlador.Conexion;
-import java.awt.Component;
-import java.awt.Graphics;
-import javax.swing.Icon;
+import java.sql.SQLException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 
 public class LoginJDialog extends javax.swing.JDialog {
@@ -11,7 +11,6 @@ public class LoginJDialog extends javax.swing.JDialog {
     public LoginJDialog(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
         initComponents();
-
     }
 
     public void CrearConexion() {
@@ -40,13 +39,12 @@ public class LoginJDialog extends javax.swing.JDialog {
         }
         if (camposEscritos == true) {
             Conexion conexion = new Conexion(servidor, puerto, usuario, password);
-            if (Conexion.getInstance() != null) {
-                //En mi caso el esquema al que me conecto tiene el mismo nombre 
-                //que el usuario, pero lo ideal sería pedir tambien el esquema
-                //de conexión en el login.
-                Defectos.CONEXION_ESQUEMA = usuario.trim();
-                dispose();
-            } else {
+            try {
+                if (Conexion.getConexion() != null) {
+                    Defectos.CONEXION_ESQUEMA = usuario.trim();
+                    dispose();
+                }
+            } catch (SQLException ex) {
                 JOptionPane.showMessageDialog(null, "No se ha establecido"
                         + " una conexión válida con el servidor.", "Error", JOptionPane.ERROR_MESSAGE);
             }
