@@ -330,7 +330,7 @@ public class PrincipalJFrame extends javax.swing.JFrame {
         jPanelValorDateInicio.add(jLabelValorDateInicio);
         jLabelValorDateInicio.setBounds(5, 5, 60, 30);
 
-        jSpinnerDateInicio.setModel(new javax.swing.SpinnerDateModel(new java.util.Date(), null, null, java.util.Calendar.MINUTE));
+        jSpinnerDateInicio.setModel(new javax.swing.SpinnerDateModel(new java.util.Date(1698981377438L), null, null, java.util.Calendar.MINUTE));
         jPanelValorDateInicio.add(jSpinnerDateInicio);
         jSpinnerDateInicio.setBounds(80, 5, 160, 30);
 

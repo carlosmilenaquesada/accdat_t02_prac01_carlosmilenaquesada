@@ -13,12 +13,7 @@ public abstract class Defectos {
     public enum TipoDeDato{
         NO_ASIGNADO, VARCHAR2, NUMBER, DATE
     }
-    
-    public enum RBTipoDeLike{
-        NO_ASIGNADO, EMPIECE, TERMINE, CONTENGA
-    }
-    
-
+   
     public static final String CONEXION_CATALOGO = null;
     public static String CONEXION_ESQUEMA;
     public static final Color COLOR_ERROR = new Color(238, 152, 151);
@@ -32,10 +27,9 @@ public abstract class Defectos {
     );
 
     public static final List<String> OP_RELACIONAL = List.of("AND", "OR");
-
    
     
-    public static final SimpleDateFormat SDF = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
+    public static final SimpleDateFormat SDF = new SimpleDateFormat("dd-MM-yyyy");// HH:mm:ss
     
     public static final String FORMATO_FECHA_SQL = "DD-MM-YYYY HH24:MI:SS";
 }

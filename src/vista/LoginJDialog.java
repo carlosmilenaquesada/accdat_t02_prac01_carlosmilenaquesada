@@ -2,8 +2,6 @@ package vista;
 
 import controlador.Conexion;
 import java.sql.SQLException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 
 public class LoginJDialog extends javax.swing.JDialog {
@@ -14,10 +12,10 @@ public class LoginJDialog extends javax.swing.JDialog {
     }
 
     public void CrearConexion() {
-        String servidor = /*jTextFieldServidor.getText()*/ "localhost";
-        String puerto = /*jTextFieldPuerto.getText()*/ "1521";
-        String usuario = /*jTextFieldUsuario.getText()*/ /*"TEMA_02_PRACTICA_01_AD"*/ "AD_TEMA02_FICHAJES";
-        String password = /*jTextFieldPassword.getText()*/ /*"TEMA_02_PRACTICA_01_AD"*/ "AD_TEMA02_FICHAJES";
+        String servidor = "localhost";
+        String puerto = "1521";
+        String usuario = "AD_TEMA02_FICHAJES";
+        String password = "AD_TEMA02_FICHAJES";
 
         boolean camposEscritos = true;
 
