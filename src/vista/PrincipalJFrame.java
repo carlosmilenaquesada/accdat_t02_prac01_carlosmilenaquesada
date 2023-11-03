@@ -42,9 +42,8 @@ public class PrincipalJFrame extends javax.swing.JFrame {
     public PrincipalJFrame() {
 
         LoginJDialog ljd = new LoginJDialog(this, true);
-
-        ljd.CrearConexion();
-
+        ljd.setVisible(true);
+        
         initComponents();
 
         initConfiguracion();
@@ -301,6 +300,7 @@ public class PrincipalJFrame extends javax.swing.JFrame {
         jLabelValorVarcharUno.setBounds(5, 5, 60, 30);
 
         jTextFieldValorVarcharUno.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        jTextFieldValorVarcharUno.setEnabled(false);
         jPanelValorVarcharUno.add(jTextFieldValorVarcharUno);
         jTextFieldValorVarcharUno.setBounds(80, 5, 160, 30);
 
@@ -344,6 +344,8 @@ public class PrincipalJFrame extends javax.swing.JFrame {
         jLabelValorNumberDos.setOpaque(true);
         jPanelValorNumberDos.add(jLabelValorNumberDos);
         jLabelValorNumberDos.setBounds(5, 5, 60, 30);
+
+        jTextFieldValorNumberDos.setEnabled(false);
         jPanelValorNumberDos.add(jTextFieldValorNumberDos);
         jTextFieldValorNumberDos.setBounds(80, 5, 160, 30);
 
@@ -368,7 +370,6 @@ public class PrincipalJFrame extends javax.swing.JFrame {
         jPanelValorOpcionesLike.setLayout(null);
 
         buttonGroupOpcionesLike.add(jRadioButtonEmpiece);
-        jRadioButtonEmpiece.setSelected(true);
         jRadioButtonEmpiece.setText("empiece");
         jPanelValorOpcionesLike.add(jRadioButtonEmpiece);
         jRadioButtonEmpiece.setBounds(1, 5, 80, 30);

@@ -12,10 +12,10 @@ public class LoginJDialog extends javax.swing.JDialog {
     }
 
     public void CrearConexion() {
-        String servidor = "localhost";
-        String puerto = "1521";
-        String usuario = "AD_TEMA02_FICHAJES";
-        String password = "AD_TEMA02_FICHAJES";
+        String servidor = jTextFieldServidor.getText();
+        String puerto = jTextFieldPuerto.getText();
+        String usuario = jTextFieldUsuario.getText();
+        String password = jTextFieldPassword.getText();
 
         boolean camposEscritos = true;
 
@@ -46,6 +46,7 @@ public class LoginJDialog extends javax.swing.JDialog {
                 JOptionPane.showMessageDialog(null, "No se ha establecido"
                         + " una conexión válida con el servidor.", "Error", JOptionPane.ERROR_MESSAGE);
             }
+            System.out.println("hola");
         } else {
             JOptionPane.showMessageDialog(null, "Debe ingresar todos los campos.", "Error", JOptionPane.ERROR_MESSAGE);
         }
@@ -80,48 +81,48 @@ public class LoginJDialog extends javax.swing.JDialog {
         jLabelServidor.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         jLabelServidor.setText("Servidor:");
         jPanel1.add(jLabelServidor);
-        jLabelServidor.setBounds(10, 10, 80, 25);
+        jLabelServidor.setBounds(10, 10, 80, 30);
 
         jTextFieldServidor.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         jPanel1.add(jTextFieldServidor);
-        jTextFieldServidor.setBounds(110, 10, 230, 25);
+        jTextFieldServidor.setBounds(110, 10, 230, 30);
 
         jLabelPuerto.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         jLabelPuerto.setText("Puerto:");
         jPanel1.add(jLabelPuerto);
-        jLabelPuerto.setBounds(10, 45, 80, 25);
+        jLabelPuerto.setBounds(10, 50, 80, 30);
 
         jTextFieldPuerto.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         jPanel1.add(jTextFieldPuerto);
-        jTextFieldPuerto.setBounds(110, 45, 230, 25);
+        jTextFieldPuerto.setBounds(110, 50, 230, 30);
 
         jLabelUsuario.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         jLabelUsuario.setText("Usuario:");
         jPanel1.add(jLabelUsuario);
-        jLabelUsuario.setBounds(10, 80, 80, 25);
+        jLabelUsuario.setBounds(10, 90, 80, 30);
 
         jTextFieldUsuario.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         jPanel1.add(jTextFieldUsuario);
-        jTextFieldUsuario.setBounds(110, 80, 230, 25);
+        jTextFieldUsuario.setBounds(110, 90, 230, 30);
 
         jLabelPassword.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         jLabelPassword.setText("Password:");
         jPanel1.add(jLabelPassword);
-        jLabelPassword.setBounds(10, 115, 80, 25);
+        jLabelPassword.setBounds(10, 130, 80, 30);
 
         jTextFieldPassword.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         jPanel1.add(jTextFieldPassword);
-        jTextFieldPassword.setBounds(110, 115, 230, 25);
+        jTextFieldPassword.setBounds(110, 130, 230, 30);
 
         jButtonAceptar.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         jButtonAceptar.setText("Aceptar");
-        jButtonAceptar.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButtonAceptarActionPerformed(evt);
+        jButtonAceptar.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jButtonAceptarMouseClicked(evt);
             }
         });
         jPanel1.add(jButtonAceptar);
-        jButtonAceptar.setBounds(10, 150, 100, 25);
+        jButtonAceptar.setBounds(10, 185, 100, 25);
 
         jButtonCancelar.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         jButtonCancelar.setText("Cancelar");
@@ -131,7 +132,7 @@ public class LoginJDialog extends javax.swing.JDialog {
             }
         });
         jPanel1.add(jButtonCancelar);
-        jButtonCancelar.setBounds(240, 150, 100, 25);
+        jButtonCancelar.setBounds(240, 185, 100, 25);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -141,16 +142,12 @@ public class LoginJDialog extends javax.swing.JDialog {
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, 185, javax.swing.GroupLayout.PREFERRED_SIZE)
+            .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, 220, javax.swing.GroupLayout.PREFERRED_SIZE)
         );
 
         pack();
         setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
-
-    private void jButtonAceptarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonAceptarActionPerformed
-        CrearConexion();
-    }//GEN-LAST:event_jButtonAceptarActionPerformed
 
     private void jButtonCancelarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonCancelarActionPerformed
         System.exit(0);
@@ -159,6 +156,10 @@ public class LoginJDialog extends javax.swing.JDialog {
     private void formWindowClosing(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosing
         System.exit(0);
     }//GEN-LAST:event_formWindowClosing
+
+    private void jButtonAceptarMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButtonAceptarMouseClicked
+        CrearConexion();
+    }//GEN-LAST:event_jButtonAceptarMouseClicked
 
     /*public static void main(String args[]) {
         java.awt.EventQueue.invokeLater(new Runnable() {
