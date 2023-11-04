@@ -29,9 +29,7 @@ public abstract class Defectos {
 
     public static final List<String> OP_RELACIONAL = List.of("AND", "OR");
 
-    public static final SimpleDateFormat SDF = new SimpleDateFormat("dd-MM-yyyy");// HH:mm:ss
-
-    public static final String FORMATO_FECHA_SQL = "DD-MM-YYYY HH24:MI:SS";
+    public static final String FORMATO_FECHA = "dd-MM-yyyy";
 
     public static final String[] MENSAJES = new String[]{
         "No se ha establecido una conexión válida con el servidor.",
@@ -49,10 +47,7 @@ public abstract class Defectos {
         "Considere cambiar el formato de fecha de la DB.",
         "No se pudo crear el archivo.",
         "Si el valor del texto está vacío, no se mostrará ningún resultado en este tipo de consulta."
-            
 
     };
-    
-    
-    
+
 }

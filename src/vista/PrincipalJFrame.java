@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.util.Date;
 
 public class PrincipalJFrame extends javax.swing.JFrame {
+
     //Creación de mis variables-------------------------------------------------
     //Combo Box model
     DefaultComboBoxModel<String> dcbmTablas;
@@ -682,7 +683,8 @@ public class PrincipalJFrame extends javax.swing.JFrame {
         if (((Date) (jSpinnerDateInicio).getValue()).after((Date) jSpinnerDateFin.getValue())) {
             JOptionPane.showMessageDialog(null, Defectos.MENSAJES[6]);
         } else {
-            condicional = "'" + Defectos.SDF.format(jSpinnerDateInicio.getValue()) + "' AND '" + Defectos.SDF.format(jSpinnerDateFin.getValue()) + "'";
+            condicional = "'" + Herramientas.convertirDateAString((Date)jSpinnerDateInicio.getValue(), Defectos.FORMATO_FECHA)
+                    + "' AND '" + Herramientas.convertirDateAString((Date)jSpinnerDateFin.getValue(), Defectos.FORMATO_FECHA) + "'";
         }
         return condicional;
     }
@@ -690,7 +692,7 @@ public class PrincipalJFrame extends javax.swing.JFrame {
     private String obtenerLineaCondicional() {
         String valorTextUno = jTextFieldValorVarcharUno.getText();
         String valorNumberUno = jTextFieldValorNumeroUno.getText();
-        String fechaIni = "'" + Defectos.SDF.format(jSpinnerDateInicio.getValue()) + "'";
+        String fechaIni = "'" + Herramientas.convertirDateAString((Date)jSpinnerDateInicio.getValue(), Defectos.FORMATO_FECHA) + "'";
         String condicional = "";
         switch (tipoDeCondicional) {
             case TIPO_COMPARACION:

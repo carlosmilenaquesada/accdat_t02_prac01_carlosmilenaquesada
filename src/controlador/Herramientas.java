@@ -6,7 +6,9 @@ import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JFileChooser;
@@ -168,5 +170,9 @@ public class Herramientas {
                 tipo = Defectos.TipoDeCondicional.TIPO_COMPARACION;
         }
         return tipo;
+    }
+        
+    public static String convertirDateAString(Date date, String formato){
+        return new SimpleDateFormat(formato).format(date);    
     }
 }
